@@ -34,39 +34,39 @@ export default function App() {
     setToDOs(current => current.filter((item)=>item.id !== itemSelected))
     setModalVisible(false)
   }
-  const onCompleted = (index: number) => {
-    let array = toDOs;
-    array[index].completed = !array[index].completed;
-    console.log(array[index]);
-    setToDOs(array)
+  const onCompleted = (id: string) => {
+    setToDOs((currentToDOs: toDoProps[])=> {
+      const newToDOs = [...currentToDOs];
+      const index: number = newToDOs.findIndex(item => item.id === id)
+      if(index != -1){
+        newToDOs[index].completed = !newToDOs[index].completed;
+      }
+      return newToDOs
+    })
   }
-  useEffect(() => {
-    console.log('\n',toDOs)
-  },[toDOs])
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>To do list</Text>
       <AddToDo onAdd={onAdd}></AddToDo>
-      <View style = {styles.list}>
+      <View style={styles.list}>
         <FlatList 
+          
           data={toDOs}
           keyExtractor={item => item.id}
-          renderItem={ ({item,index}) =>
+          renderItem={ ({item}) =>
             <View style={styles.task}>
-              <BouncyCheckbox onPress={() => {onCompleted(index)}} />
+              <BouncyCheckbox  onPress={() => {onCompleted(item.id)} } isChecked={item.completed}/>
               <Text style={item.completed?{...styles.taskText, 
                 textDecorationLine: 'line-through',
                 backgroundColor: '#adff2f'  
               }:styles.taskText}>{item.title}</Text>
               <View style={styles.buttons}>
                 <Button color='red' title='Borrar' onPress={()=> onDelete(item.id)}/>
-                
               </View>
-              
             </View>  
           }
-
         />
         <Modal visible={modalVisible}>
           <View style={styles.modal}>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex:1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     gap: 6,
   },
   task: {
@@ -109,52 +109,32 @@ const styles = StyleSheet.create({
     border: '3px',
     borderWidth: 3,
     borderColor: 'black',
+    margin: 10,
     padding: 30,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center'
   },
   taskText: {
     margin: 5,
     width: '60%',	
-    borderBottomWidth: 2,
-    borderBottomColor: '#aaaabb',
-    borderCurve: 'circular'
   },
   buttons: {
-    margin: 3,
-    /*padding: 3,*/
-    gap:3
+    padding: 10,
+    //padding: 3*/
+    
   },
   modal: {
     flex: 1,
-    width: '60%',
     padding: 5,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center'
+    opacity: 3
   },
   modal_buttons: {
     padding: 4,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     flexDirection: 'row',
     gap: 4
   }
 });
-/*<View style={styles.container_2}>
-    <TouchableOpacity
-      onPress={() => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-        setExpanded(!expanded);
-      }}>
-      <Text>Press me to {expanded ? 'collapse' : 'expand'}!</Text>
-    </TouchableOpacity>
-    {expanded && (
-      <View style={styles.tile}>
-        <Text>I disappear sometimes!</Text>
-      </View>
-    )}
-  </View>
-
-  <Button color='green' title='Completar' onPress={()=> {onCompleted(item.id)}}/>
-  
-  */
