@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { colors } from '../global/colors';
 
 type Props = {
     onAdd: Function
@@ -28,7 +29,7 @@ const AddToDo = ({onAdd}: Props) => {
                 closeOnHardwareBackPress={false}
                 showConfirmButton={true}
                 confirmText="OK"
-                confirmButtonColor="#DD6B55"
+                confirmButtonColor={colors.limeGreen}
                 onCancelPressed={() => {
                     setShowAlert(false);
                 }}
