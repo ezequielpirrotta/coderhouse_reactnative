@@ -3,16 +3,12 @@ import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import UserCard from '../components/UserCard'
 import Footer from '../components/Footer'
-import { Props } from '../data/objectTypes'
 
-
-const Home = ({setScreen}: Props) => {
-   
+const Home = () => {
    return (
       <>
          <Header/>
-         <UserCard setScreen={setScreen}/>
-         <Footer setScreen={setScreen}/>
+         <UserCard/>
       </>
    )
 }

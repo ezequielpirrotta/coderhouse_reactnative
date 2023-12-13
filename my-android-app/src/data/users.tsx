@@ -7,7 +7,8 @@ export const users: User[] = [
         matches: [],
         age: 52,
         location: 'Ciudad1',
-        interests: ['musica','correr']
+        interests: ['musica','correr'],
+        filter: {}
     },
     {
         id: '342342343-kjhkjhkjh',
@@ -16,6 +17,17 @@ export const users: User[] = [
         matches: [],
         age: 27,
         location: 'Ciudad1',
-        interests: ['musica','correr']
+        interests: ['musica','correr'],
+        filter: {}
+    },
+    {
+        id: 'dfsldfnsldkf3uioew',
+        username: "someone-45",
+        password: "alguienpass",
+        matches: [],
+        age: 45,
+        location: 'Ciudad3',
+        interests: ['musica','correr'],
+        filter: {}
     }
 ]

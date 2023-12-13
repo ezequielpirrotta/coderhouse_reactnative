@@ -6,10 +6,11 @@ export type User = {
     location: string
     interests: string[]
     matches: Match[]
+    filter: Filter
 }
 export type UserContextType = {
-    user: User | undefined
-    updateUser: (user: User|undefined) => void
+    user: User
+    updateUser: (user: User) => void
   };
 export type Match = {
     userId: string
@@ -19,6 +20,7 @@ export type Filter = {
     location?: string
     commonInterests?: string[]
 }
-export type Props = {
+export type screenProps = {
+    screen: boolean
     setScreen: Function
- }
+}

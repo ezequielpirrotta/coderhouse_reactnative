@@ -1,50 +1,49 @@
 import { Button, FlatList, Modal, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { users } from '../data/users'
-import { Props, User } from '../data/objectTypes'
+import React, { useState, useEffect, useContext} from 'react'
+import { users as allUsers }  from '../data/users'
+import { User, UserContextType } from '../data/objectTypes'
 import { colors } from '../global/colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import Search from '../components/Search'
+import { UserContext } from '../contexts/UserContext'
 
-const UserCard = ({setScreen}: Props) => {
-   const [user, setUser] = useState<User[]>(users)
-   
+const UserCard = () => {
+   const {user} = useContext(UserContext) as UserContextType
+   const [userLiked, setUserLiked] = useState('')
+   const [keyword,setKeyword] = useState('')
+   const [users,setUsers] = useState<User[]>([])
    const onLike = (id: string) => {
-
-   })
+      setUserLiked(id);
+   }
+   useEffect(()=>{
+      const usersLocation = allUsers.filter(usr => usr.location === user.location)
+      const filteredUsers = usersLocation.filter(user => user.username.includes(keyword));
+      setUsers(filteredUsers)
+   },[keyword])
    return (
       <View>
-         <Button title={"Go Back"} onPress={setScreen(true)}></Button>
+         <Text style={styles.title}>Usuarios cerca de ti</Text>
+         <Search setKeyword={setKeyword}/>
          <View style={styles.list}>
             <FlatList 
                data={users}
-               keyExtractor={user => user.id}
+               keyExtractor={item => item.id}
                renderItem={ ({item}) =>
                <View style={styles.task}>
-                  <BouncyCheckbox  onPress={() => {onLike(item.id)} } isChecked={item.completed}/>
-                  <Text style={item.completed?{...styles.taskText, 
-                  textDecorationLine: 'line-through',
-                  backgroundColor: '#adff2f'  
-                  }:styles.taskText}>{item.title}</Text>
+                  <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
+                  <Text style={styles.taskText}>{item.username}, {item.age} años</Text>
+                  <Text>{item.location}</Text>
                   <View style={styles.buttons}>
-                  <Button color='red' title='Borrar' onPress={()=> onDelete(item.id)}/>
+                     
                   </View>
                </View>  
             }
             />
-            <Modal animationType='fade' visible={modalVisible}>
-               <View style={styles.modal}>
-                  <Text>Esta seguro de que quiere eliminar la tarea?</Text>
-                  <View style={styles.modal_buttons}>
-                     <Button color={'red'} title='Eliminar' onPress={()=>{onDeleteConfirm()}}></Button>
-                     <Button title='Cancelar' onPress={()=>{setModalVisible(false)}}></Button>
-                  </View>
-               </View>
-            </Modal>
          </View>
       </View>
    )
 }
-
+//<Button color='red' title='Borrar' onPress={()=> onDelete(item.id)}/>
 export default UserCard
 
 const styles = StyleSheet.create({
@@ -53,6 +52,12 @@ const styles = StyleSheet.create({
       width: "100%",
       justifyContent: "center",
       alignItems: "center"
+   },
+   title: {
+      textAlign: 'center',
+      fontSize: 30,
+      fontFamily: 'JosefinBold',
+      fontWeight: '200'
    },
    modal: {
       flex: 1,
@@ -84,10 +89,4 @@ const styles = StyleSheet.create({
     buttons: {
       padding: 10,
     },
-    modal_buttons: {
-      padding: 4,
-      justifyContent: 'center',
-      flexDirection: 'row',
-      gap: 4
-    }
 })

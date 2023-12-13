@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, Button } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import io, { Socket } from 'socket.io-client';
 
-const ChatScreen: React.FC = () => {
+const ChatScreen = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const socket: Socket = io('http://tu-servidor-websockets');
@@ -23,7 +23,7 @@ const ChatScreen: React.FC = () => {
     };
   }, []);
 
-  const onSend = (newMessages: string) => {
+  const onSend = (newMessages: IMessage[] = []) => {
     if (newMessages.length === 0) {
       return;
     }
@@ -66,11 +66,11 @@ const ChatScreen: React.FC = () => {
           onChangeText={(text) => setInputMessage(text)}
           placeholder="Escribe un mensaje..."
         />
-        <Button title="Enviar" onPress={() => onSend(inputMessage)} />
       </View>
     </View>
   );
 };
+'<Button title="Enviar" onPress={() => onSend(inputMessage)} />'
 
 const styles = StyleSheet.create({
   container: {

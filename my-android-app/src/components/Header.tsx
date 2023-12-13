@@ -13,17 +13,18 @@ const Header = ({title = 'Connect ME'} ) => {
 export default Header
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: colors.green,
-        width: "100%",
-       
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    title: {
-        margin: 30,
-        fontSize: 20,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
+  container: {
+    backgroundColor: colors.green,
+    width: "100%",
+    
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  title: {
+    margin: 30,
+    fontSize: 20,
+    fontFamily: 'JosefinBold',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
 })
