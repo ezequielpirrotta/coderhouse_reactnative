@@ -16,7 +16,7 @@ const SliderContainer = (props: {
     );
     let renderTrackMarkComponent: (index: number) => React.ReactElement | null;
 
-    /*if (trackMarks?.length && (!Array.isArray(value) || value?.length === 1)) {
+    if (trackMarks?.length && (!Array.isArray(value) || value?.length === 1)) {
         renderTrackMarkComponent = (index: number) => {
             const currentMarkValue = trackMarks[index];
             const currentSliderValue =
@@ -27,7 +27,7 @@ const SliderContainer = (props: {
                     : trackMarkStyles.inactiveMark;
             return <View style={style} />;
         };
-    }*/
+    }
     const onChange = (newValue: number[]) =>{
         setValue(newValue);
 

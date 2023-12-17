@@ -4,20 +4,34 @@ import { User, UserContextType } from '../data/objectTypes';
 export const UserContext = createContext<UserContextType | null>(null);
 
 const UserContextProvider = ({children}: PropsWithChildren) => {
-   const [user, setUser] = useState<User>( {
-      id: 'ldksfjslkfj-lkj4l5h345j',
-      username: "Mariano",
-      password: "MM",
-      matches: [{userId: 'ldksfjslkfj-lkj4l5h345j'}],
-      age: 20,
-      location: 'Ciudad1',
-      interests: ['musica','correr'],
-      filter: {ageRange: [20,30]}
-   })
+   const [user, setUser] = useState<User|undefined>()
+   useEffect(()=>{
+      const fetchData = async () => {
+
+         const response = await fetch(
+            'https://randomuser.me/api/?inc=gender,login,id,name,location,dob,cell,picture,nat&noinfo'
+         );
+         
+         const result = (await response.json()).result
+         let newUser: User = {
+            id: result.id.value,
+            username: result.login.username,
+            password: result.login.password,
+            matches: [],
+            pictures: [result.picture.thumbnail],
+            age: 20,
+            location: result.location.city,
+            interests: ['musica','correr'],
+            filter: {ageRange: [20,30]}
+         }
+         setUser(newUser);
+      }
+      fetchData()
+      console.log(user)
+   },[])
    
    const updateUser = (newUser: User) => {
       setUser(newUser)
-      console.log(user)
    }
    return (
       <UserContext.Provider value={{ 

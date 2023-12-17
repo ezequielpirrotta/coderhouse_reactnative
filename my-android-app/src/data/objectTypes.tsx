@@ -2,6 +2,7 @@ export type User = {
     id: string
     username: string
     password: string
+    pictures: string[]
     age: number
     location: string
     interests: string[]
@@ -9,7 +10,7 @@ export type User = {
     filter: Filter
 }
 export type UserContextType = {
-    user: User
+    user: User | undefined
     updateUser: (user: User) => void
   };
 export type Match = {
@@ -19,8 +20,4 @@ export type Filter = {
     ageRange?: [number, number]
     location?: string
     commonInterests?: string[]
-}
-export type screenProps = {
-    screen: boolean
-    setScreen: Function
 }

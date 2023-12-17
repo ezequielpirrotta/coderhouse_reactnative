@@ -1,15 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { StyleSheet } from 'react-native';
+import React from 'react';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
+import Header from './src/components/Header';
+import FooterTabBar from './src/components/FooterTabBar';
 import UserContextProvider from './src/contexts/UserContext';
-import Footer from './src/components/Footer';
 import { useFonts } from 'expo-font';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+
 
 const App = () =>{
-  
-  const [screenSelected, setScreenSelected] = useState(true)
   
   const [fontLoaded] = useFonts({
     JosefinItalic: require('./assets/fonts/Josefin/JosefinSlab-Italic-VariableFont_wght.ttf'),
@@ -17,31 +20,40 @@ const App = () =>{
     JosefinBold: require('./assets/fonts/Josefin/JosefinSlab-Bold.ttf'),
   })
   if(!fontLoaded) return null
-  
+
+  const Tab = createBottomTabNavigator();
+
   return (
     <UserContextProvider>
-      <View style={styles.container}>
-        {
-          screenSelected?
-          <Home />
-          :
-          <Profile/>
-        }
-        <Footer screen={screenSelected} setScreen={setScreenSelected}/>
-      </View>
+      <NavigationContainer>
+        <Tab.Navigator 
+          tabBar={(props)=>{return <FooterTabBar {...props}/>}}
+        >
+          <Tab.Screen name='home' component={Home} options={
+            ()=>{
+              return {
+                header: ()=> {
+                  return <Header title='Connect ME'/>
+                }
+              }
+            }
+          }>
+          </Tab.Screen>
+          <Tab.Screen name='profile' component={Profile} options={
+            ()=>{
+              return {
+                header: ()=> {
+                  return <Header title='Profile'/>
+                }
+              }
+            }
+          }>
+          </Tab.Screen>
+        </Tab.Navigator>
+      </NavigationContainer>
+      
     </UserContextProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    border: '6px',
-    borderColor: 'solid black',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  },
-});
 
 export default App;

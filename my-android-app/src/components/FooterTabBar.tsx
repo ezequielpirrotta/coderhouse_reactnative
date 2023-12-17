@@ -3,19 +3,14 @@ import React from 'react'
 import { colors } from '../global/colors'
 import { Entypo, Ionicons } from '@expo/vector-icons';
 
-type screenProps = {
-   screen: boolean
-   setScreen: Function
-}
-
-const Footer = ({screen, setScreen}: screenProps) => {
+const FooterTabBar = ({navigation}: any) => {
    return (
       <View style={styles.container}>
          <View style={styles.buttons}>
-            <Pressable key={'home'} onPress={()=>setScreen(true)}>
+            <Pressable onPress={()=>{navigation.navigate('home')}}>
                <Entypo name="home" size={32} color="black" />
             </Pressable>
-            <Pressable key={'profile'} onPress={()=>setScreen(false)}>
+            <Pressable onPress={()=>{navigation.navigate('profile')}}>
                <Ionicons name="person-circle-outline" size={32} color="black" />
             </Pressable>
          </View>
@@ -23,7 +18,7 @@ const Footer = ({screen, setScreen}: screenProps) => {
    )
 }
 
-export default Footer
+export default FooterTabBar
 
 const styles = StyleSheet.create({
     container: {

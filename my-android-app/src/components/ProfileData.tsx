@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { StyleSheet, Text, View, Button, FlatList,Modal, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList,Modal, ScrollView, Dimensions, Image, ActivityIndicator } from 'react-native';
 import uuid from 'react-native-uuid';
 import { colors } from '../global/colors'
 import { Filter, User, UserContextType } from '../data/objectTypes';
@@ -9,6 +9,7 @@ import { users as allUsers } from '../data/users';
 import { Slider } from '@miblanchard/react-native-slider';
 import SliderContainer from './SliderContainer';
 import AwesomeAlert from 'react-native-awesome-alerts';
+/*import LoaderKit from 'react-native-loader-kit'*/
 
 const ProfileData = () => {
   const {user, updateUser} = useContext(UserContext) as UserContextType;
@@ -16,7 +17,7 @@ const ProfileData = () => {
   const [itemSelected, setItemSelected] = useState('')
   const [showAlert, setShowAlert] = useState(false);
   const [didEdit, setDidEdit] = useState(false)
-  const [userFilters, setUserFilters] = useState(user.filter)
+  const [userFilters, setUserFilters] = useState(user?user.filter:{})
 
   const onValueChange = (filters: Filter | undefined) => {
     setDidEdit(true)
@@ -25,114 +26,141 @@ const ProfileData = () => {
 
   const onEdit = () => {
     let newData: User | undefined = user
-    newData.filter=userFilters
-    updateUser(newData)
-    setDidEdit(false)
+    if(newData){
+      newData.filter=userFilters
+      updateUser(newData)
+      setDidEdit(false)
+    }
   }
   const onDelete = (id:string) => {
     setItemSelected(id);
     setModalVisible(true);
   }
   const onDeleteConfirm = () => {
-   
   }
   
   const getUserMatched = () => {
-    const matchedUsers = allUsers.filter((currentUser)=>{
-      let match = false;
-      user.matches.forEach(element => {
-        if(currentUser.id===element.userId){
-          match = true;
-        }
-      });
-      return match
-    })
-    return matchedUsers
+    if(user){
+      const matchedUsers = allUsers.filter((currentUser)=>{
+        let match = false;
+        user.matches.forEach(element => {
+          if(currentUser.id===element.userId){
+            match = true;
+          }
+        });
+        return match
+      })
+      return matchedUsers
+    }
   }
   
   return (
     
     <View style={styles.container}>
-      <View >
-        <ScrollView >
-          {user.filter.ageRange?
-              <>
-                <SliderContainer
-                  caption="Age"
-                  sliderValue={[user.filter.ageRange[0],user.filter.ageRange[1]]}
-                  onValueChange={onValueChange}>
-                  <Slider
-                    animateTransitions
-                    maximumTrackTintColor="#d3d3d3"
-                    maximumValue={80}
-                    minimumTrackTintColor="#1fb28a"
-                    minimumValue={18}
-                    step={1}
-                    thumbTintColor="#1a9274"
-                    containerStyle={styles.slider}
-                  />
-                </SliderContainer>
-                {
-                  didEdit?
-                  <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
-                  :null
+      {
+        user!=undefined? 
+          <>
+            <ScrollView contentContainerStyle={styles.userData}>
+              <View>
+                <Image source={{uri:`../../assets/favicon.png`}} style={styles.image}/>
+              </View>
+              {user.filter.ageRange?
+                  <>
+                    <SliderContainer
+                      caption="Age"
+                      sliderValue={[user.filter.ageRange[0],user.filter.ageRange[1]]}
+                      onValueChange={onValueChange}>
+                      <Slider
+                        animateTransitions
+                        maximumTrackTintColor="#d3d3d3"
+                        maximumValue={80}
+                        minimumTrackTintColor="#1fb28a"
+                        minimumValue={18}
+                        step={1}
+                        thumbTintColor="#1a9274"
+                        containerStyle={styles.slider}
+                      />
+                    </SliderContainer>
+                    {
+                      didEdit?
+                      <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
+                      :null
+                    }
+                  </>
+                :
+                null
+              }
+              <AwesomeAlert
+                show={showAlert}
+                showProgress={false}
+                title="Estás seguro que querés cambiar la edad?"
+                closeOnTouchOutside={true}
+                closeOnHardwareBackPress={false}
+                showConfirmButton={true}
+                showCancelButton={true}
+                confirmText='SI'
+                cancelText='NO'
+                confirmButtonColor="#DD6B55"
+                onCancelPressed={() => {
+                    ()=>{
+    
+                    }
+                    setShowAlert(false);
+                }}
+                onConfirmPressed={() => {
+                    onEdit()
+                    setShowAlert(false);
+                }}
+            />
+            </ScrollView>
+            <View style={styles.list}>
+              <FlatList 
+                data={getUserMatched()}
+                keyExtractor={item => item.id}
+                renderItem={ ({item}) =>
+                  <View style={styles.task}>
+                    <BouncyCheckbox  onPress={() => {} } />
+                    <Text style={styles.taskText}>{item.username}, {item.age} años</Text>
+                        <Text>{item.location}</Text>
+                        <View style={styles.buttons}>
+                          
+                        </View>
+                  </View>  
                 }
-              </>
-            :
-            null
-          }
-          <AwesomeAlert
-            show={showAlert}
-            showProgress={false}
-            title="Estás seguro que querés cambiar la edad?"
-            closeOnTouchOutside={true}
-            closeOnHardwareBackPress={false}
-            showConfirmButton={true}
-            showCancelButton={true}
-            confirmText='SI'
-            cancelText='NO'
-            confirmButtonColor="#DD6B55"
-            onCancelPressed={() => {
-                setShowAlert(false);
-            }}
-            onConfirmPressed={() => {
-                onEdit()
-                setShowAlert(false);
-            }}
-        />
-        </ScrollView>
-      </View>
-      <View style={styles.list}>
-        <FlatList 
-          data={getUserMatched()}
-          keyExtractor={item => item.id}
-          renderItem={ ({item}) =>
-            <View style={styles.task}>
-              <BouncyCheckbox  onPress={() => {} } />
-              <Text style={styles.taskText}>{item.username}, {item.age} años</Text>
-                  <Text>{item.location}</Text>
-                  <View style={styles.buttons}>
-                     
+              />
+              <Modal animationType='fade' visible={modalVisible}>
+                <View style={styles.modal}>
+                  <Text>Esta seguro de que quiere eliminar la tarea?</Text>
+                  <View style={styles.modal_buttons}>
+                    <Button color={'red'} title='Eliminar' onPress={()=>{onDeleteConfirm()}}></Button>
+                    <Button title='Cancelar' onPress={()=>{setModalVisible(false)}}></Button>
                   </View>
-            </View>  
-          }
-        />
-        <Modal animationType='fade' visible={modalVisible}>
-          <View style={styles.modal}>
-            <Text>Esta seguro de que quiere eliminar la tarea?</Text>
-            <View style={styles.modal_buttons}>
-              <Button color={'red'} title='Eliminar' onPress={()=>{onDeleteConfirm()}}></Button>
-              <Button title='Cancelar' onPress={()=>{setModalVisible(false)}}></Button>
+                </View>
+              </Modal>
             </View>
-          </View>
-        </Modal>
-      </View>
+          </>
+        :
+        <ActivityIndicator 
+          
+          size="large"
+        />
+             
+      }
     </View>
   )
 }
 
 export default ProfileData
 /**
+ * 
+ * <LoaderKit
+    style={{ width: 50, height: 50 }}
+    name={'BallPulse'} // Optional: see list of animations below
+    size={50} // Required on iOS
+    color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+    />     
+ * 
+ * 
  *  <Text style={styles.sliderTitle}>Age</Text>
     <Slider
       minimumValue={user.filter.ageRange[0]}
@@ -142,21 +170,25 @@ export default ProfileData
       trackClickable={true}
     />
  */
+const windowWidth = Dimensions.get('window').width
 const styles = StyleSheet.create({
   
   container: {
     backgroundColor: colors.darkCream,
-    width: "100%",
+    width: windowWidth,
     justifyContent: "center",
     alignItems: "center"
   },
-  /*sliders: {
-    flex:1,
-    justifyContent: 'center',
-    alignItems: 'center' 
-  },*/
+  image:{
+    width: '80%'
+  },
   slider: {
     width: '50%'
+  },
+  userData: {
+    flex:1,
+    justifyItems:'center',
+    alignItems: 'center'
   },
   sliderTitle: {
     

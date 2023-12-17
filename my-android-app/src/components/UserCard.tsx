@@ -1,4 +1,4 @@
-import { Button, FlatList, Modal, StyleSheet, Text, View } from 'react-native'
+import { Button, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
 import React, { useState, useEffect, useContext} from 'react'
 import { users as allUsers }  from '../data/users'
 import { User, UserContextType } from '../data/objectTypes'
@@ -12,16 +12,46 @@ const UserCard = () => {
    const [userLiked, setUserLiked] = useState('')
    const [keyword,setKeyword] = useState('')
    const [users,setUsers] = useState<User[]>([])
+
+   const getUsers = async () => {
+      const response = await fetch(
+         'https://randomuser.me/api/?results=5&inc=gender,login,id,name,location,dob,cell,picture,nat&noinfo'
+      );
+      let newUsers: User[] = []
+      const result = (await response.json()).results
+      result.forEach((element: any) => {
+         let newUser: User = {
+            id: element.id.value,
+            username: element.login.username,
+            password: element.login.password,
+            matches: [],
+            pictures: [element.picture.thumbnail],
+            age: element.dob.age,
+            location: element.location.city,
+            interests: ['musica','correr'],
+            filter: {}
+         }
+         newUsers.push(newUser);
+      });
+      return newUsers;
+   } 
+
    const onLike = (id: string) => {
       setUserLiked(id);
    }
+   
    useEffect(()=>{
-      const usersLocation = allUsers.filter(usr => usr.location === user.location)
-      const filteredUsers = usersLocation.filter(user => user.username.includes(keyword));
-      setUsers(filteredUsers)
+      const fetchData = async () => {
+         const data = await getUsers();
+         console.log(data)
+         const usersLocation = data.filter(usr => user?usr.location === user.location:false)
+         const filteredUsers = usersLocation.filter(user => user.username.includes(keyword));
+         setUsers(filteredUsers)
+      };
+      fetchData();
    },[keyword])
    return (
-      <View>
+      <View style={styles.container}>
          <Text style={styles.title}>Usuarios cerca de ti</Text>
          <Search setKeyword={setKeyword}/>
          <View style={styles.list}>
@@ -30,11 +60,13 @@ const UserCard = () => {
                keyExtractor={item => item.id}
                renderItem={ ({item}) =>
                <View style={styles.task}>
-                  <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
+                  <View>
+                     <Image source={require('../../assets/favicon.png')}></Image>
+                  </View>
                   <Text style={styles.taskText}>{item.username}, {item.age} años</Text>
                   <Text>{item.location}</Text>
                   <View style={styles.buttons}>
-                     
+                     <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
                   </View>
                </View>  
             }
@@ -43,11 +75,12 @@ const UserCard = () => {
       </View>
    )
 }
-//<Button color='red' title='Borrar' onPress={()=> onDelete(item.id)}/>
+
 export default UserCard
 
 const styles = StyleSheet.create({
    container: {
+      flex:1,
       backgroundColor: colors.darkCream,
       width: "100%",
       justifyContent: "center",
