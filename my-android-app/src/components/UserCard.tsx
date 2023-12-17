@@ -43,7 +43,6 @@ const UserCard = () => {
    useEffect(()=>{
       const fetchData = async () => {
          const data = await getUsers();
-         console.log(data)
          const usersLocation = data.filter(usr => user?usr.location === user.location:false)
          const filteredUsers = usersLocation.filter(user => user.username.includes(keyword));
          setUsers(filteredUsers)
@@ -59,11 +58,11 @@ const UserCard = () => {
                data={users}
                keyExtractor={item => item.id}
                renderItem={ ({item}) =>
-               <View style={styles.task}>
+               <View style={styles.user}>
                   <View>
                      <Image source={require('../../assets/favicon.png')}></Image>
                   </View>
-                  <Text style={styles.taskText}>{item.username}, {item.age} años</Text>
+                  <Text style={styles.userText}>{item.username}, {item.age} años</Text>
                   <Text>{item.location}</Text>
                   <View style={styles.buttons}>
                      <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       gap: 6,
     },
-    task: {
+    user: {
       flex: 1,
       border: '3px',
       borderWidth: 3,
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center'
     },
-    taskText: {
+    userText: {
       margin: 5,
       width: '60%',	
     },

@@ -12,6 +12,7 @@ export type User = {
 export type UserContextType = {
     user: User | undefined
     updateUser: (user: User) => void
+    isLoading: boolean
   };
 export type Match = {
     userId: string

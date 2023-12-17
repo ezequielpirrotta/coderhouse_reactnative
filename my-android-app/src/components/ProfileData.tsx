@@ -12,7 +12,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 /*import LoaderKit from 'react-native-loader-kit'*/
 
 const ProfileData = () => {
-  const {user, updateUser} = useContext(UserContext) as UserContextType;
+  const {user, updateUser, isLoading} = useContext(UserContext) as UserContextType;
   const [modalVisible, setModalVisible] = useState(false);
   const [itemSelected, setItemSelected] = useState('')
   const [showAlert, setShowAlert] = useState(false);
@@ -58,11 +58,12 @@ const ProfileData = () => {
     
     <View style={styles.container}>
       {
-        user!=undefined? 
+        user? 
           <>
             <ScrollView contentContainerStyle={styles.userData}>
               <View>
-                <Image source={{uri:`../../assets/favicon.png`}} style={styles.image}/>
+                <Image source={{uri:user.pictures[0]}} style={styles.image}/>
+                <Text style={styles.name}>{user.username}</Text>
               </View>
               {user.filter.ageRange?
                   <>
@@ -152,15 +153,6 @@ const ProfileData = () => {
 
 export default ProfileData
 /**
- * 
- * <LoaderKit
-    style={{ width: 50, height: 50 }}
-    name={'BallPulse'} // Optional: see list of animations below
-    size={50} // Required on iOS
-    color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-    />     
- * 
- * 
  *  <Text style={styles.sliderTitle}>Age</Text>
     <Slider
       minimumValue={user.filter.ageRange[0]}
@@ -180,7 +172,12 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   image:{
+    minWidth: 90,
+    minHeight: 90,
     width: '80%'
+  },
+  name: {
+
   },
   slider: {
     width: '50%'

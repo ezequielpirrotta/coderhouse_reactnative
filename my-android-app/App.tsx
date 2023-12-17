@@ -1,5 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
 import React from 'react';
 import Home from './src/screens/Home';
 import Profile from './src/screens/Profile';
