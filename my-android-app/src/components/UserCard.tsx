@@ -1,40 +1,19 @@
-import { Button, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, Button, Dimensions, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
 import React, { useState, useEffect, useContext} from 'react'
-import { users as allUsers }  from '../data/users'
 import { User, UserContextType } from '../data/objectTypes'
 import { colors } from '../global/colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import Search from '../components/Search'
 import { UserContext } from '../contexts/UserContext'
+import uuid from 'react-native-uuid';
+import { isLoading } from 'expo-font'
 
 const UserCard = () => {
    const {user} = useContext(UserContext) as UserContextType
    const [userLiked, setUserLiked] = useState('')
    const [keyword,setKeyword] = useState('')
    const [users,setUsers] = useState<User[]>([])
-
-   const getUsers = async () => {
-      const response = await fetch(
-         'https://randomuser.me/api/?results=5&inc=gender,login,id,name,location,dob,cell,picture,nat&noinfo'
-      );
-      let newUsers: User[] = []
-      const result = (await response.json()).results
-      result.forEach((element: any) => {
-         let newUser: User = {
-            id: element.id.value,
-            username: element.login.username,
-            password: element.login.password,
-            matches: [],
-            pictures: [element.picture.thumbnail],
-            age: element.dob.age,
-            location: element.location.city,
-            interests: ['musica','correr'],
-            filter: {}
-         }
-         newUsers.push(newUser);
-      });
-      return newUsers;
-   } 
+   const [isLoading, setIsLoading] = useState(true)
 
    const onLike = (id: string) => {
       setUserLiked(id);
@@ -42,40 +21,89 @@ const UserCard = () => {
    
    useEffect(()=>{
       const fetchData = async () => {
-         const data = await getUsers();
-         const usersLocation = data.filter(usr => user?usr.location === user.location:false)
-         const filteredUsers = usersLocation.filter(user => user.username.includes(keyword));
-         setUsers(filteredUsers)
+         try {
+            const response = await fetch(
+               'https://randomuser.me/api/?results=5&inc=gender,login,id,name,location,dob,cell,picture,nat&noinfo'
+            );
+            let newUsers: User[] = []
+            const result = (await response.json()).results
+            result.forEach((element: any) => {
+               let newUser: User = {
+                  id: String(uuid.v4()),
+                  name: element.name.first+' '+element.name.last,
+                  username: element.login.username,
+                  password: element.login.password,
+                  matches: [],
+                  pictures: [element.picture.thumbnail],
+                  age: element.dob.age,
+                  location: 'Ciudad1',
+                  interests: ['musica','correr'],
+                  filter: {}
+               }
+               newUsers.push(newUser);
+            });
+            return newUsers;
+         }
+         catch(error) {
+            console.error('Error fetching user data:', error);
+            throw error;
+         }
       };
-      fetchData();
-   },[keyword])
+      fetchData()
+      .then(async (newUsers) => {
+         const usersLocation = newUsers.filter(usr => user?usr.location === user.location:false)
+         const filteredUsers = usersLocation.filter(user => user.name.includes(keyword));
+         setUsers(filteredUsers)
+         setIsLoading(false);
+      })
+      .catch((error) => {
+         // Handle error appropriately, e.g., show an alert
+         Alert.alert('Error', 'Failed to fetch user data');
+      });
+   },[keyword,user])
+   useEffect(()=>{
+      if(users.length > 0){
+         setIsLoading(false)
+      }
+      else {
+         setIsLoading(true)
+      }
+   },[users])
    return (
       <View style={styles.container}>
          <Text style={styles.title}>Usuarios cerca de ti</Text>
          <Search setKeyword={setKeyword}/>
          <View style={styles.list}>
-            <FlatList 
-               data={users}
-               keyExtractor={item => item.id}
-               renderItem={ ({item}) =>
-               <View style={styles.user}>
-                  <View>
-                     <Image source={require('../../assets/favicon.png')}></Image>
-                  </View>
-                  <Text style={styles.userText}>{item.username}, {item.age} años</Text>
-                  <Text>{item.location}</Text>
-                  <View style={styles.buttons}>
-                     <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
-                  </View>
-               </View>  
+            {
+               !isLoading?
+               <FlatList 
+                  data={users}
+                  keyExtractor={item => item.id}
+                  renderItem={ ({item}) =>
+                  <View style={styles.user}>
+                     
+                     <Image source={{uri: user?.pictures[0]}} style={styles.image}/>
+                     <Text style={styles.userText}>{item.name}, {item.age} años</Text>
+                     <Text>{item.location}</Text>
+                     <View style={styles.buttons}>
+                        <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
+                     </View>
+                  </View>  
+               }
+               />
+               :
+               <>
+                  <ActivityIndicator size={'large'}></ActivityIndicator>
+                  <Text>Cargando usuarios...</Text>
+               </>
             }
-            />
          </View>
       </View>
    )
 }
-
 export default UserCard
+
+const windowWidth = Dimensions.get('window').width
 
 const styles = StyleSheet.create({
    container: {
@@ -83,7 +111,9 @@ const styles = StyleSheet.create({
       backgroundColor: colors.darkCream,
       width: "100%",
       justifyContent: "center",
-      alignItems: "center"
+      alignItems: "center",
+      paddingTop: 20,
+      paddingBottom: 50
    },
    title: {
       textAlign: 'center',
@@ -105,14 +135,22 @@ const styles = StyleSheet.create({
     },
     user: {
       flex: 1,
+      gap: 3,
       border: '3px',
       borderWidth: 3,
       borderColor: 'black',
+      width: windowWidth-30,
       margin: 10,
       padding: 30,
-      flexDirection: 'row',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    image:{
+      minWidth: 90,
+      minHeight: 90,
+      resizeMode: 'contain',
+      borderRadius: 50
     },
     userText: {
       margin: 5,

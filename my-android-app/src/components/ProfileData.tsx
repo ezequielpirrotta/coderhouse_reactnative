@@ -60,60 +60,63 @@ const ProfileData = () => {
       {
         user? 
           <>
-            <ScrollView contentContainerStyle={styles.userData}>
-              <View>
+            <View style={styles.userData}>
+              <View style={styles.profile}>
                 <Image source={{uri:user.pictures[0]}} style={styles.image}/>
-                <Text style={styles.name}>{user.username}</Text>
+                <Text style={styles.name}>{user.name}, {user.age}</Text>
               </View>
-              {user.filter.ageRange?
-                  <>
-                    <SliderContainer
-                      caption="Age"
-                      sliderValue={[user.filter.ageRange[0],user.filter.ageRange[1]]}
-                      onValueChange={onValueChange}>
-                      <Slider
-                        animateTransitions
-                        maximumTrackTintColor="#d3d3d3"
-                        maximumValue={80}
-                        minimumTrackTintColor="#1fb28a"
-                        minimumValue={18}
-                        step={1}
-                        thumbTintColor="#1a9274"
-                        containerStyle={styles.slider}
-                      />
-                    </SliderContainer>
-                    {
-                      didEdit?
-                      <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
-                      :null
-                    }
-                  </>
-                :
-                null
-              }
-              <AwesomeAlert
-                show={showAlert}
-                showProgress={false}
-                title="Estás seguro que querés cambiar la edad?"
-                closeOnTouchOutside={true}
-                closeOnHardwareBackPress={false}
-                showConfirmButton={true}
-                showCancelButton={true}
-                confirmText='SI'
-                cancelText='NO'
-                confirmButtonColor="#DD6B55"
-                onCancelPressed={() => {
-                    ()=>{
-    
-                    }
-                    setShowAlert(false);
-                }}
-                onConfirmPressed={() => {
-                    onEdit()
-                    setShowAlert(false);
-                }}
-            />
-            </ScrollView>
+              <View style={styles.preferences} >
+                <Text style={styles.prefsTitle}>Preferencias</Text>
+                {user.filter.ageRange?
+                    <>
+                      <SliderContainer
+                        caption="Age"
+                        sliderValue={[user.filter.ageRange[0],user.filter.ageRange[1]]}
+                        onValueChange={onValueChange}>
+                        <Slider
+                          animateTransitions
+                          maximumTrackTintColor="#d3d3d3"
+                          maximumValue={80}
+                          minimumTrackTintColor="#1fb28a"
+                          minimumValue={18}
+                          step={1}
+                          thumbTintColor="#1a9274"
+                          containerStyle={styles.slider}
+                        />
+                      </SliderContainer>
+                      {
+                        didEdit?
+                        <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
+                        :null
+                      }
+                    </>
+                  :
+                  null
+                }
+                <AwesomeAlert
+                  show={showAlert}
+                  showProgress={false}
+                  title="Estás seguro que querés cambiar la edad?"
+                  closeOnTouchOutside={true}
+                  closeOnHardwareBackPress={false}
+                  showConfirmButton={true}
+                  showCancelButton={true}
+                  confirmText='SI'
+                  cancelText='NO'
+                  confirmButtonColor="#DD6B55"
+                  onCancelPressed={() => {
+                      ()=>{
+      
+                      }
+                      setShowAlert(false);
+                  }}
+                  onConfirmPressed={() => {
+                      onEdit()
+                      setShowAlert(false);
+                  }}
+                />
+              </View>
+            </View>
             <View style={styles.list}>
               <FlatList 
                 data={getUserMatched()}
@@ -121,7 +124,7 @@ const ProfileData = () => {
                 renderItem={ ({item}) =>
                   <View style={styles.task}>
                     <BouncyCheckbox  onPress={() => {} } />
-                    <Text style={styles.taskText}>{item.username}, {item.age} años</Text>
+                    <Text style={styles.taskText}>{item.name}, {item.age} años</Text>
                         <Text>{item.location}</Text>
                         <View style={styles.buttons}>
                           
@@ -141,50 +144,62 @@ const ProfileData = () => {
             </View>
           </>
         :
-        <ActivityIndicator 
-          
-          size="large"
-        />
-             
+        <ActivityIndicator size="large"/>   
       }
     </View>
   )
 }
 
 export default ProfileData
-/**
- *  <Text style={styles.sliderTitle}>Age</Text>
-    <Slider
-      minimumValue={user.filter.ageRange[0]}
-      maximumValue={user.filter.ageRange[1]}
-      step={1}
-      value={0.1}
-      trackClickable={true}
-    />
- */
+
 const windowWidth = Dimensions.get('window').width
 const styles = StyleSheet.create({
   
   container: {
     backgroundColor: colors.darkCream,
-    width: windowWidth,
     justifyContent: "center",
     alignItems: "center"
+  },
+  profile:{
+    gap: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    paddingBottom: 30
   },
   image:{
     minWidth: 90,
     minHeight: 90,
-    width: '80%'
+    width: windowWidth/5,
+    resizeMode: 'contain',
+    borderRadius: 50
   },
   name: {
-
+    fontSize: 24,
+    fontFamily: 'JosefinBold'
+  },
+  preferences: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding:20,
+    backgroundColor:'#d9d9d9',
+    shadowColor: "#000000",
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    shadowOffset: {
+      height: 1,
+      width: 1
+    }
+  },
+  prefsTitle: {
+    fontSize: 20
   },
   slider: {
     width: '50%'
   },
   userData: {
     flex:1,
-    justifyItems:'center',
+    justifyContent:'center',
     alignItems: 'center'
   },
   sliderTitle: {

@@ -16,12 +16,13 @@ const UserContextProvider = ({children}: PropsWithChildren) => {
             const result = await response.json()
             let newUser: User = {
                id: result.results[0].id.value,
+               name: result.results[0].name.first+' '+result.results[0].name.last,
                username: result.results[0].login.username,
                password: result.results[0].login.password,
                matches: [],
                pictures: [result.results[0].picture.thumbnail],
                age: 20,
-               location: result.results[0].location.city,
+               location: 'Ciudad1',
                interests: ['musica','correr'],
                filter: {ageRange: [20,30]}
             }
@@ -42,10 +43,7 @@ const UserContextProvider = ({children}: PropsWithChildren) => {
          Alert.alert('Error', 'Failed to fetch user data');
       });
    },[])
-   useEffect(() => {
-      console.log(user);
-   }, [user]);
-
+   
    const updateUser = (newUser: User) => {
       setUser(newUser)
    }
