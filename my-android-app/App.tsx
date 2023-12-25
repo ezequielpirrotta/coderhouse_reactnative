@@ -1,14 +1,11 @@
-import React from 'react';
-import Home from './src/screens/Home';
-import Profile from './src/screens/Profile';
-import Header from './src/components/Header';
-import FooterTabBar from './src/components/FooterTabBar';
+import React, { useEffect } from 'react';
 import UserContextProvider from './src/contexts/UserContext';
 import { useFonts } from 'expo-font';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-
+import { Provider, TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import Store, { AppDispatch, RootState } from './src/app/store';
+import TabNavigator from './src/navigators/TabNavigator';
+import { getUser } from './src/features/users/userSlice';
+import { useAppDispatch, useAppSelector } from './src/app/hooks';
 
 const App = () =>{
   
@@ -18,39 +15,21 @@ const App = () =>{
     JosefinBold: require('./assets/fonts/Josefin/JosefinSlab-Bold.ttf'),
   })
   if(!fontLoaded) return null
-
-  const Tab = createBottomTabNavigator();
-
+  const dispatch = useAppDispatch()
+  const user = useAppSelector(state => state)
+  useEffect(()=> {
+    dispatch(getUser())
+  },[])
+  console.log(user)
   return (
-    <UserContextProvider>
-      <NavigationContainer>
-        <Tab.Navigator 
-          tabBar={(props)=>{return <FooterTabBar {...props}/>}}
-        >
-          <Tab.Screen name='home' component={Home} options={
-            ()=>{
-              return {
-                header: ()=> {
-                  return <Header title='Connect ME'/>
-                }
-              }
-            }
-          }>
-          </Tab.Screen>
-          <Tab.Screen name='profile' component={Profile} options={
-            ()=>{
-              return {
-                header: ()=> {
-                  return <Header title='Profile'/>
-                }
-              }
-            }
-          }>
-          </Tab.Screen>
-        </Tab.Navigator>
-      </NavigationContainer>
+    <Provider store={Store}>
+      {
+        user.isloading
+      }
       
-    </UserContextProvider>
+        <TabNavigator/>
+      
+    </Provider>
   );
 }
 

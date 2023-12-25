@@ -3,6 +3,7 @@ import React from 'react'
 import { colors } from '../global/colors'
 import { Entypo, Ionicons } from '@expo/vector-icons';
 
+
 const FooterTabBar = ({navigation}: any) => {
    return (
       <View style={styles.container}>
@@ -12,6 +13,9 @@ const FooterTabBar = ({navigation}: any) => {
             </Pressable>
             <Pressable onPress={()=>{navigation.navigate('profile')}}>
                <Ionicons name="person-circle-outline" size={32} color="black" />
+            </Pressable>
+            <Pressable>
+               <Ionicons name="chatbubbles" size={32} color="black" />
             </Pressable>
          </View>
       </View>
@@ -27,11 +31,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.darkCream,
         height: 50,
         width: "100%",
-        shadowOpacity: 5,
+        shadowOpacity: 7,
         justifyContent: "center",
         alignItems: "center",
         shadowColor: 'black',
-        elevation: 4,
+        elevation: 6,
         position: 'absolute', 
         left: 0, 
         right: 0, 

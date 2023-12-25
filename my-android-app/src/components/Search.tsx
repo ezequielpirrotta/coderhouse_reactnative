@@ -14,10 +14,10 @@ const Search = ({setKeyword}: searchProps) => {
     return (
         <View style={styles.container}>
             <TextInput style={styles.input} value={text} onChangeText={(value) => setText(value)} placeholder='Nombre'/>
-            <Pressable onPress={()=> {setKeyword()}}>
+            <Pressable onPress={()=> {setKeyword(text)}}>
                 <AntDesign name="search1" size={24} color="black" />
             </Pressable>
-            <Pressable onPress={()=> {setText('')}}>
+            <Pressable onPress={()=> {setText(''); setKeyword(text);}}>
                 <AntDesign name="closecircle" size={24} color="black" />
             </Pressable>
         </View>

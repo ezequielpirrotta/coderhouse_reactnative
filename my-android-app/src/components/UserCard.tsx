@@ -6,13 +6,15 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import Search from '../components/Search'
 import { UserContext } from '../contexts/UserContext'
 import uuid from 'react-native-uuid';
-import { isLoading } from 'expo-font'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
 
 const UserCard = () => {
-   const {user} = useContext(UserContext) as UserContextType
+   const dispatch = useAppDispatch()
+   const user = useAppSelector((state) => state)
    const [userLiked, setUserLiked] = useState('')
    const [keyword,setKeyword] = useState('')
    const [users,setUsers] = useState<User[]>([])
+   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
    const [isLoading, setIsLoading] = useState(true)
 
    const onLike = (id: string) => {
@@ -20,6 +22,7 @@ const UserCard = () => {
    }
    
    useEffect(()=>{
+      console.log(user)
       const fetchData = async () => {
          try {
             const response = await fetch(
@@ -51,16 +54,20 @@ const UserCard = () => {
       };
       fetchData()
       .then(async (newUsers) => {
-         const usersLocation = newUsers.filter(usr => user?usr.location === user.location:false)
-         const filteredUsers = usersLocation.filter(user => user.name.includes(keyword));
-         setUsers(filteredUsers)
+         setUsers(newUsers);
          setIsLoading(false);
       })
       .catch((error) => {
          // Handle error appropriately, e.g., show an alert
          Alert.alert('Error', 'Failed to fetch user data');
       });
-   },[keyword,user])
+   },[user])
+   useEffect(()=> {
+      const usersLocation = users.filter(usr => user?usr.location === user.location:false)
+      const filtered = usersLocation.filter(user => user.name.includes(keyword))
+      setFilteredUsers(keyword!=''?filtered:usersLocation)
+      setIsLoading(false);
+   },[keyword])
    useEffect(()=>{
       if(users.length > 0){
          setIsLoading(false)
@@ -77,7 +84,7 @@ const UserCard = () => {
             {
                !isLoading?
                <FlatList 
-                  data={users}
+                  data={filteredUsers.length>0?filteredUsers:users}
                   keyExtractor={item => item.id}
                   renderItem={ ({item}) =>
                   <View style={styles.user}>

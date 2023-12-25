@@ -6,6 +6,9 @@ export type User = {
     pictures: string[]
     age: number
     location: string
+    gender: string
+    sex: 'M'|'F'
+    likes: string[]
     interests: string[]
     matches: Match[]
     filter: Filter
