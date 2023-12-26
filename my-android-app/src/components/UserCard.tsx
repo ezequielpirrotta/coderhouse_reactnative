@@ -1,16 +1,15 @@
-import { ActivityIndicator, Alert, Button, Dimensions, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
-import React, { useState, useEffect, useContext} from 'react'
-import { User, UserContextType } from '../data/objectTypes'
+import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { User } from '../data/objectTypes'
 import { colors } from '../global/colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import Search from '../components/Search'
-import { UserContext } from '../contexts/UserContext'
 import uuid from 'react-native-uuid';
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 
 const UserCard = () => {
    const dispatch = useAppDispatch()
-   const user = useAppSelector((state) => state)
+   const user = useAppSelector((state) => state.user.data)
    const [userLiked, setUserLiked] = useState('')
    const [keyword,setKeyword] = useState('')
    const [users,setUsers] = useState<User[]>([])
@@ -22,7 +21,6 @@ const UserCard = () => {
    }
    
    useEffect(()=>{
-      console.log(user)
       const fetchData = async () => {
          try {
             const response = await fetch(

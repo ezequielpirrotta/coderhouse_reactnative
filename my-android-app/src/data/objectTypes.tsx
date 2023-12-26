@@ -13,11 +13,6 @@ export type User = {
     matches: Match[]
     filter: Filter
 }
-export type UserContextType = {
-    user: User | undefined
-    updateUser: (user: User) => void
-    isLoading: boolean
-  };
 export type Match = {
     userId: string
 }

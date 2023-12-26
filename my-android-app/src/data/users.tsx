@@ -1,46 +1,51 @@
 import {User} from './objectTypes'
-
+import uuid from 'react-native-uuid';
 
 
 export const users: User[] = [
    {
-      id: 'ldksfjslkfj-lkj4l5h345j',
+      id: String(uuid.v4()),
+      name: 'Pepito Gonzales',
       username: "alguien",
       password: "alguienpass",
-      matches: [],
-      pictures: ['../../assets/favicon.png'],
       age: 52,
       location: 'Ciudad1',
+      gender: 'Hombre',
+      sex: 'M',
+      pictures: ['../../assets/favicon.png'],
+      likes: [],
+      matches: [],
       interests: ['musica','correr'],
-      filter: {}
+      filter: {ageRange: [20,30]}
    },
    {
-      id: '342342343-kjhkjhkjh',
-      username: "alguien-2",
+      id: String(uuid.v4()),
+      name: 'Maria Gonzales',
+      username: "alguien",
       password: "alguienpass",
-      matches: [],
-      pictures: ['../../assets/favicon.png'],
-      age: 27,
+      age: 40,
       location: 'Ciudad1',
+      gender: 'Hombre',
+      sex: 'F',
+      pictures: ['../../assets/favicon.png'],
+      likes: [],
+      matches: [],
       interests: ['musica','correr'],
-      filter: {}
+      filter: {ageRange: [20,30]}
    },
    {
-      id: 'dfsldfnsldkf3uioew',
-      username: "someone-45",
+      id: String(uuid.v4()),
+      name: 'Pepita Gonzales',
+      username: "alguien",
       password: "alguienpass",
-      matches: [],
+      age: 35,
+      location: 'Ciudad1',
+      gender: 'Mujer',
+      sex: 'M',
       pictures: ['../../assets/favicon.png'],
-      age: 45,
-      location: 'Ciudad3',
+      likes: [],
+      matches: [],
       interests: ['musica','correr'],
-      filter: {}
+      filter: {ageRange: [20,30]}
    }
 ]
-
-
-
-/**
- * 
- * 
- */

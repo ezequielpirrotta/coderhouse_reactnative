@@ -14,7 +14,7 @@ const FooterTabBar = ({navigation}: any) => {
             <Pressable onPress={()=>{navigation.navigate('profile')}}>
                <Ionicons name="person-circle-outline" size={32} color="black" />
             </Pressable>
-            <Pressable>
+            <Pressable onPress={()=>{navigation.navigate('chat')}}>
                <Ionicons name="chatbubbles" size={32} color="black" />
             </Pressable>
          </View>

@@ -29,7 +29,7 @@ export const getUser = createAsyncThunk('getUser', async () => {
 })
 
 const initialState: UserState = {
-   isLoading: false,
+   isLoading: true,
    data: null,
    error: false
 }
@@ -38,7 +38,10 @@ export const userSlice = createSlice({
    name: 'user',
    initialState: initialState,
    reducers: {
-
+      updateUser: (state: UserState, action: PayloadAction<User>) => {
+         let updatedUser: User = action.payload
+         state.data = updatedUser
+      }
    },
    extraReducers: builder => {
    
@@ -56,6 +59,6 @@ export const userSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {  } = userSlice.actions
+export const { updateUser } = userSlice.actions
 
 export default userSlice.reducer

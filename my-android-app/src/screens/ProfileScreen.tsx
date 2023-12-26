@@ -5,9 +5,13 @@ import ProfileData from '../components/ProfileData'
 const Profile = () => {
 
    return (
-      <View style={styles.container}>
-         <ProfileData />
-      </View>
+      <>
+         {
+            <View style={styles.container}>
+               <ProfileData/>
+            </View>
+         }
+      </>
    )
 }
 
