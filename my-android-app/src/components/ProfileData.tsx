@@ -3,7 +3,6 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { StyleSheet, Text, View, Button, FlatList,Modal, Dimensions, Image, ActivityIndicator } from 'react-native';
 import { colors } from '../global/colors'
 import { Filter, User } from '../data/objectTypes';
-import { users as allUsers } from '../data/users';
 import { Slider } from '@miblanchard/react-native-slider';
 import SliderContainer from './SliderContainer';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -39,8 +38,9 @@ const ProfileData = () => {
    }
    
    const getUserMatched = () => {
+      /*const users: User = {}
       if(user){
-         const matchedUsers = allUsers.filter((currentUser)=>{
+         const matchedUsers = [].filter((currentUser)=>{
          let match = false;
          user.matches.forEach(element => {
             if(currentUser.id===element.userId){
@@ -50,7 +50,7 @@ const ProfileData = () => {
          return match
          })
          return matchedUsers
-      }
+      }*/
    }
    
    return (

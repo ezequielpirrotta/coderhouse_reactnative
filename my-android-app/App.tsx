@@ -2,7 +2,7 @@ import React from 'react';
 import { useFonts } from 'expo-font';
 import { Provider } from 'react-redux';
 import { store } from './src/app/store';
-import ActualApp from './ActualApp';
+import MainNavigator from './src/navigators/MainNavigator';
 
 const App = () =>{
   
@@ -14,7 +14,7 @@ const App = () =>{
   if(!fontLoaded) return null
   return (
     <Provider store={store}>
-      <ActualApp/>
+      <MainNavigator/>
     </Provider>
   );
 }

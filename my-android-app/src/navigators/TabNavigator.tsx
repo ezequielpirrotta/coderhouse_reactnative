@@ -10,10 +10,10 @@ const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
    return (
-      <NavigationContainer>
-         <Tab.Navigator 
-         tabBar={(props)=>{return <FooterTabBar {...props}/>}}
-         >
+      
+      <Tab.Navigator 
+      tabBar={(props)=>{return <FooterTabBar {...props}/>}}
+      >
          <Tab.Screen name='home' component={Home} options={
             ()=>{
                return {
@@ -44,8 +44,7 @@ const TabNavigator = () => {
             }
          }>
          </Tab.Screen>
-         </Tab.Navigator>
-      </NavigationContainer>
+      </Tab.Navigator>
    )
 }
 export default TabNavigator;

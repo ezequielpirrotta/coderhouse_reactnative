@@ -35,10 +35,13 @@ const UserCard = () => {
                   username: element.login.username,
                   password: element.login.password,
                   matches: [],
-                  pictures: [element.picture.thumbnail],
+                  pictures: [element.picture.medium],
                   age: element.dob.age,
                   location: 'Ciudad1',
                   interests: ['musica','correr'],
+                  gender: '',
+                  sex: element.gender,
+                  likes: [],
                   filter: {}
                }
                newUsers.push(newUser);
