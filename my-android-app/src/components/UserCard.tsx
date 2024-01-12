@@ -32,12 +32,10 @@ const UserCard = () => {
                let newUser: User = {
                   id: String(uuid.v4()),
                   name: element.name.first+' '+element.name.last,
-                  username: element.login.username,
-                  password: element.login.password,
                   matches: [],
                   pictures: [element.picture.medium],
                   age: element.dob.age,
-                  location: 'Ciudad1',
+                  home: 'Ciudad1',
                   interests: ['musica','correr'],
                   gender: '',
                   sex: element.gender,
@@ -64,7 +62,7 @@ const UserCard = () => {
       });
    },[user])
    useEffect(()=> {
-      const usersLocation = users.filter(usr => user?usr.location === user.location:false)
+      const usersLocation = users.filter(usr => user?usr.home === user.home:false)
       const filtered = usersLocation.filter(user => user.name.includes(keyword))
       setFilteredUsers(keyword!=''?filtered:usersLocation)
       setIsLoading(false);
@@ -92,7 +90,7 @@ const UserCard = () => {
                      
                      <Image source={{uri: user?.pictures[0]}} style={styles.image}/>
                      <Text style={styles.userText}>{item.name}, {item.age} años</Text>
-                     <Text>{item.location}</Text>
+                     <Text>{item.home}</Text>
                      <View style={styles.buttons}>
                         <BouncyCheckbox  onPress={() => {onLike(item.id)}}/>
                      </View>

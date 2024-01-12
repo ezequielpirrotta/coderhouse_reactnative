@@ -1,44 +1,76 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputForm from './InputForm'
 import SubmitButton from '../SubmitButton'
 import { StackScreenProps } from '../../data/navigationTypes'
 import { colors } from '../../global/colors'
 import { useCreateUserMutation, useGetUserQuery, useRegisterMutation } from '../../app/servicies'
 import { User } from '../../data/objectTypes'
+import { signUpSchema } from '../../validations/signUpSchema'
 
 const Register = ({navigation}: StackScreenProps) => {
    const [name,setName] = useState('')
    const [lastName,setLastName] = useState('')
    const [email,setEmail] = useState('')
+   const [errorEmail,setErrorEmail] = useState('')
    const [password,setPassword] = useState('')
+   const [errorPassword, setErrorPassword] = useState('')
+   const [confirmPassword,setConfirmPassword] = useState('')
+   const [errorConfirmPassword, setErrorConfirmPassword] = useState('')
    const [age, setAge] = useState(18)
    const [sex, setSex] = useState('male')
-   const [confirmPassword,setConfirmPassword] = useState('')
    const [triggerRegister, result] = useRegisterMutation()
    const [triggerCreate] = useCreateUserMutation()
 
+   //console.log(result.error?.data?.error.message)
+   useEffect(()=>{
+      setErrorEmail('')
+      setErrorPassword('')
+      setErrorConfirmPassword('')
+   },[email,password,confirmPassword])
+  
    const onSubmit = () => {
-      triggerRegister({
-         email,
-         password,
-      }).then((result)=>{
-         if('data' in result ) {
-            const newUser: User = {
-               name: name+' '+lastName,
-               id: result.data.userId,
-               pictures: [],
-               age: age,
-               home: '',
-               sex: sex,
-               likes: [],
-               interests: [],
-               matches: [],
-               filter: {}
+      try {
+         const validation = signUpSchema.validateSync({email,password,confirmPassword})
+         triggerRegister({
+            email,
+            password,
+         }).then(()=>{
+            if(result.isSuccess) {
+               const newUser: User = {
+                  name: name+' '+lastName,
+                  id: result.data.userId,
+                  pictures: [],
+                  age: age,
+                  home: '',
+                  sex: sex,
+                  likes: [],
+                  interests: [],
+                  matches: [],
+                  filter: {}
+               }
+               triggerCreate(newUser)
             }
-            triggerCreate(newUser)
+            else { 
+               console.log(result.error)
+            }
+         })
+      }
+      catch(error: any) {
+         console.log('Error:')
+         console.log(error.path)
+         switch (error.path) {
+            case 'email':
+               setErrorEmail(error.message)
+               break
+            case 'password':
+               setErrorPassword(error.message)
+               break
+            case 'confirmPassword':
+               setErrorConfirmPassword(error.message)
+               break
          }
-      })
+      }
    }
 
    return (
@@ -56,6 +88,7 @@ const Register = ({navigation}: StackScreenProps) => {
             <InputForm
                label='Email'
                onChange={setEmail}
+               error={errorEmail}
             />
             <InputForm
                label='Edad'
@@ -65,11 +98,14 @@ const Register = ({navigation}: StackScreenProps) => {
                label='Contraseña'
                onChange={setPassword}
                isSecure={true}
+               error={errorPassword}
             />
             <InputForm
                label='Confirmar contraseña'
                onChange={setConfirmPassword}
                isSecure={true}
+               error={errorConfirmPassword}
+
             />
             <SubmitButton title='Registrarse' onPress={onSubmit}/>
             <Text>Ya ienes una cuenta?</Text>
@@ -102,7 +138,9 @@ const styles = StyleSheet.create({
       margin: 10
    },
    subLink: {
-
+      color: 'blue',
+      fontSize: 14,
+      /*fontFamily: 'Josefin'*/
    }
 })
 export default Register;

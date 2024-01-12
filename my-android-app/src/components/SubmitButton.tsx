@@ -6,7 +6,7 @@ import { colors } from '../global/colors'
 const SubmitButton = ({title,onPress}: ButtonParams) => {
   return (
     <View style={styles.container} >
-      <Pressable style={styles.button} onPress={() => {onPress}}>
+      <Pressable style={styles.button} onPress={() => {onPress()}}>
          <Text style={styles.title}>{title}</Text>
       </Pressable>
     </View>

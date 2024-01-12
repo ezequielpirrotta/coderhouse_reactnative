@@ -2,7 +2,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { InputFormProps } from '../../data/objectTypes'
 
-const InputForm = ({label,onChange,error,isSecure=false}: InputFormProps) => {
+const InputForm = ({label,onChange,error='',isSecure=false}: InputFormProps) => {
    const [input,setInput] = useState('')
 
    const onChangeText = (text: string) => {
@@ -18,6 +18,10 @@ const InputForm = ({label,onChange,error,isSecure=false}: InputFormProps) => {
             onChangeText={(value)=>{onChangeText(value)}}
             secureTextEntry={isSecure}
          />
+         {error?
+            <Text style={styles.error}>{ error }</Text>
+            : null
+         }
       </View>
    )
 }
@@ -40,6 +44,12 @@ const styles = StyleSheet.create({
       borderBottomWidth: 3,
       padding: 2,
       fontSize: 14
+   },
+   error: {
+      fontSize: 16,
+      color: 'red',
+      /*fontFamily: 'Josefin',*/
+      fontStyle: 'italic'
    }
 })
 export default InputForm
