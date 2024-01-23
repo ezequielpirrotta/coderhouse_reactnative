@@ -4,23 +4,25 @@ import { colors } from '../../../global/colors'
 import InputForm from '../InputForm'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
+import { signUpSchema } from '../../../validations/signUpSchema'
 import { useRegisterDispatch } from '../../../app/hooks'
-import { setHome } from '../../../features/users/registerSlice'
+import { addBio, addIntersts } from '../../../features/users/registerSlice'
 
-const UserHome = ({navigation}: StackRegisterScreenProps) => {
-   const [userHome,setUserHome] = useState('')
+const Bio = ({navigation}: StackRegisterScreenProps) => {
+   const [bio,setBio] = useState('')
    const [skip, setSkip] = useState(false)
    const dispatch = useRegisterDispatch()
+
    useEffect(()=>{
       if(skip){
-         navigation.navigate('GenderData')
+         navigation.navigate('Pictures')
       }
-   },[])
+   },[skip])
    const onSubmit = () => {
       try {
-         if(userHome != '') {
-            dispatch(setHome(userHome))
-            navigation.navigate('GenderData')
+         if(bio != '') {
+            dispatch(addBio(bio))
+            navigation.navigate('Pictures')
          }
       }
       catch(error: any) {
@@ -30,21 +32,19 @@ const UserHome = ({navigation}: StackRegisterScreenProps) => {
    return (
       <View style={styles.main}>
          <View style={styles.container}>
-            <Text style={styles.title}>De donde Eres?</Text>
+            <Text style={styles.title}>Cuenta un poco de ti !!</Text>
             <InputForm
-               label='Cuidad'
-               onChange={setUserHome}
+               label='Biografia'
+               onChange={setBio}
             />
-            
             <SubmitButton title='Siguiente' onPress={onSubmit}/>
             <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
-
          </View>
       </View>
    )
 }
 
-export default UserHome
+export default Bio
 
 const styles = StyleSheet.create({
    main: {

@@ -1,5 +1,4 @@
 export type User = {
-   id: string
    name: string
    pictures: string[]
    age: number
@@ -24,6 +23,7 @@ export type RegisterState = {
    age: number,
    sex: string,
    gender: string,
+   home: string
    pictures: string[],
    bio: string,
    interests: string[],
@@ -41,15 +41,20 @@ export type Match = {
     userId: string
 }
 export type Filter = {
-    ageRange?: [number, number]
-    location?: string
-    commonInterests?: string[]
+   ageRange?: [number, number]
+   location?: string
+   commonInterests?: string[]
 }
 export type InputFormProps = {
    label: string
    onChange: Function
    error?: string
    isSecure?: boolean
+}
+export type InputSelectFormProps = {
+   label: string
+   onChange: Function,
+   options: string[]
 }
 export type AuthState = {
    email: string
@@ -59,6 +64,7 @@ export type AuthState = {
 export type ButtonParams = {
    title: string
    onPress: Function
+   color?: string
 }
 export type Error = {
    message: string

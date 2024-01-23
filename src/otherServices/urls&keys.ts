@@ -1,0 +1,1 @@
+export const cloudinary_api_url = 'https://api.cloudinary.com/v1_1/diwu5zigd' 

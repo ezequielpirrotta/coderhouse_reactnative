@@ -2,10 +2,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Login: undefined
-  Register: undefined
+  RegisterNavigator: undefined
 };
 
-export type StackScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'|'Register'>;
+export type StackScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'|'RegisterNavigator'>;
 
 /**
  * Parametros para la navegacion en el Register
@@ -15,7 +15,10 @@ export type RootStackRegisterParamList = {
   UserHome: undefined
   GenderData: undefined
   Interests: undefined
+  Bio: undefined
   Pictures: undefined
+  Register: undefined
 };
 
-export type StackRegisterScreenProps = NativeStackScreenProps<RootStackRegisterParamList, 'MainData'|'UserHome'|'GenderData'|'Interests'|'Pictures'>;
+export type StackRegisterScreenProps = NativeStackScreenProps<RootStackRegisterParamList, 
+  'MainData'|'UserHome'|'GenderData'|'Interests'|'Bio'|'Pictures'|'Register'>;

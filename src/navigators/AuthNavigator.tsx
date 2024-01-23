@@ -8,28 +8,37 @@ import Header from '../components/Header';
 import { RootStackParamList } from '../data/navigationTypes';
 import { Provider } from 'react-redux';
 import { registerStore } from '../app/Register/registerStore';
+import RegisterNavigator from './RegisterNavigator';
 
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 const AuthNavigator = () => {
    return (
-      <Provider store={registerStore}>
-         <RootStack.Navigator initialRouteName='Login'>
-            <RootStack.Screen name='Login' component={Login} 
-               options={
-                  ()=>{
-                     return {
-                        header: ()=> {
-                           return <Header title='Bienvenido de nuevo!!'/>
-                        }
+      <RootStack.Navigator initialRouteName='Login'>
+         <RootStack.Screen name='Login' component={Login} 
+            options={
+               ()=>{
+                  return {
+                     header: ()=> {
+                        return <Header title='Bienvenido de nuevo!!'/>
                      }
                   }
                }
-            />
-            <RootStack.Screen name='Register' component={Register} />
-         </RootStack.Navigator>
-      </Provider>
+            }
+         />
+         <RootStack.Screen name='RegisterNavigator' component={RegisterNavigator} 
+            options={
+               ()=>{
+                  return {
+                     header: ()=> {
+                        return <Header title='Registro'/>
+                     }
+                  }
+               }
+            }
+         />
+      </RootStack.Navigator>
    )
 }
 export default AuthNavigator

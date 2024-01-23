@@ -84,7 +84,7 @@ const Login = ({navigation}: StackScreenProps) => {
                />
                <SubmitButton title='Iniciar Sesion' onPress={onSubmit}/>
                <Text>Aun no tienes una cuenta?</Text>
-               <Pressable onPress={()=>{navigation.navigate('Register')}}>
+               <Pressable onPress={()=>{navigation.navigate('RegisterNavigator')}}>
                   <Text style={styles.subLink}>Creala!</Text>
                </Pressable>
             </View>

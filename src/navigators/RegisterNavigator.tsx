@@ -10,65 +10,42 @@ import Header from '../components/Header'
 import { RootStackRegisterParamList } from '../data/navigationTypes';
 import MainData from '../components/users/Registration/MainData';
 import GenderData from '../components/users/Registration/GenderData'
+import UserHome from '../components/users/Registration/UserHome'
+import Register from '../components/users/Registration/Register'
+import { Provider } from 'react-redux'
+import { registerStore } from '../app/Register/registerStore'
+import Interests from '../components/users/Registration/Interests'
+import Pictures from '../components/users/Registration/Pictures'
+import Bio from '../components/users/Registration/Bio'
 
 const RootStack = createNativeStackNavigator<RootStackRegisterParamList>();
 
 const RegisterNavigator = ({navigation}: StackScreenProps) => {
    
-   const [triggerRegister, result] = useRegisterMutation()
-   const [triggerCreate] = useCreateUserMutation()
-
-   
-   
-  
-   const onSubmit = () => {
-      try {
-         triggerRegister({
-            email,
-            password,
-         }).then(()=>{
-            if(result.isSuccess) {
-               const newUser: User = {
-                  name: name+' '+lastName,
-                  username: 
-                  pictures: [],
-                  age: age,
-                  home: '',
-                  sex: sex,
-                  likes: [],
-                  interests: [],
-                  matches: [],
-                  filter: {}
-               }
-               triggerCreate(newUser)
-            }
-            else { 
-               console.log(result.error)
-            }
-         })
-      }
-      catch(error: any) {
-         
-      }
-   }
-
    return (
-      <RootStack.Navigator initialRouteName='MainData'>
-         <RootStack.Screen name='MainData' component={MainData} />
-         <RootStack.Screen name='UserHome' component={MainData} />
-         <RootStack.Screen name='GenderData' component={GenderData} />
-         <RootStack.Screen name='Interests' component={GenderData} />
-         <RootStack.Screen name='Pictures' component={GenderData} />
-      </RootStack.Navigator>
-      
+      <Provider store={registerStore}>
+         <RootStack.Navigator initialRouteName='MainData'
+            screenOptions={{
+               headerShown:false
+            }}
+         >
+            <RootStack.Screen name='MainData' component={MainData} options={{title:'Informacion basica'}}/>
+            <RootStack.Screen name='UserHome' component={UserHome} />
+            <RootStack.Screen name='GenderData' component={GenderData} />
+            <RootStack.Screen name='Interests' component={Interests} />
+            <RootStack.Screen name='Bio' component={Bio} />
+            <RootStack.Screen name='Pictures' component={Pictures} />
+            <RootStack.Screen name='Register' component={Register} />
+         </RootStack.Navigator>
+         
+         
+      </Provider>
    )
 }
 const styles = StyleSheet.create({
    main: {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center'
+      
+      
    },
    container: {
       width: '90%',

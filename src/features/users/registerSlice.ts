@@ -7,7 +7,8 @@ const initialState: RegisterState = {
    email: '',
    password: '',
    age: 18,
-   sex: 'male',
+   sex: '',
+   home: '',
    gender: '',
    pictures: [],
    bio: '',
@@ -25,6 +26,9 @@ export const registerSlice = createSlice({
          state.age = action.payload.age
          state.sex = action.payload.sex
       },
+      setHome: (state: RegisterState, action: PayloadAction<string>) => {
+         state.gender = action.payload
+      },
       setGender: (state: RegisterState, action: PayloadAction<string>) => {
          state.gender = action.payload
       },
@@ -34,12 +38,12 @@ export const registerSlice = createSlice({
       addIntersts: (state: RegisterState, action: PayloadAction<string[]>) => {
          state.interests = action.payload
       },
-      addPicture: (state: RegisterState, action: PayloadAction<string>) => {
-         state.pictures.push(action.payload)
+      addPictures: (state: RegisterState, action: PayloadAction<string[]>) => {
+         state.pictures = action.payload
       }
    },
 })
 
-export const { setBasics} = registerSlice.actions
+export const { setBasics,setHome,setGender, addBio, addIntersts, addPictures } = registerSlice.actions
 
 export default registerSlice.reducer

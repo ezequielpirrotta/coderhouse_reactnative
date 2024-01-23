@@ -16,7 +16,9 @@ const MainNavigator = () => {
    const {token,email} = useAppSelector((state) => state.auth)
    const {data: userData,isLoading,error} = useGetUserQuery({username: email})
    useEffect(() => {
+      
       (async () => {
+         console.log(token)
          try {
             const session: ResultSet | void = await fetchSession()
             .then(()=>{ 

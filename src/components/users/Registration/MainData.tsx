@@ -5,8 +5,9 @@ import InputForm from '../InputForm'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
 import { signUpSchema } from '../../../validations/signUpSchema'
-import { useAppDispatch } from '../../../app/hooks'
+import { useAppDispatch, useRegisterDispatch } from '../../../app/hooks'
 import { setBasics } from '../../../features/users/registerSlice'
+import InputSelectForm from '../InputSelectForm'
 
 const MainData = ({navigation}: StackRegisterScreenProps) => {
     const [name,setName] = useState('')
@@ -19,7 +20,7 @@ const MainData = ({navigation}: StackRegisterScreenProps) => {
     const [errorConfirmPassword, setErrorConfirmPassword] = useState('')
     const [age, setAge] = useState(18)
     const [sex, setSex] = useState('male')
-    const dispatch = useAppDispatch()
+    const dispatch = useRegisterDispatch()
 
     useEffect(()=>{
         setErrorEmail('')
@@ -60,42 +61,42 @@ const MainData = ({navigation}: StackRegisterScreenProps) => {
     return (
         <View style={styles.main}>
             <View style={styles.container}>
-            <Text style={styles.title}>Register</Text>
-            <InputForm
-                label='Nombre'
-                onChange={setName}
-            />
-            <InputForm
-                label='Apellido'
-                onChange={setLastName}
-            />
-            <InputForm
-                label='Email'
-                onChange={setEmail}
-                error={errorEmail}
-            />
-            <InputForm
-                label='Edad'
-                onChange={setAge}
-            />
-            <InputForm
-                label='Contraseña'
-                onChange={setPassword}
-                isSecure={true}
-                error={errorPassword}
-            />
-            <InputForm
-                label='Confirmar contraseña'
-                onChange={setConfirmPassword}
-                isSecure={true}
-                error={errorConfirmPassword}
-
-            />
-            <SubmitButton title='Siguiente' onPress={onSubmit}/>
-            <Text>Ya ienes una cuenta?</Text>
-            <Pressable onPress={()=>{}}>
-                <Text style={styles.subLink}>Inicia Sesion!</Text>
-            </Pressable>
+                <Text style={styles.title}>Informacion Basica</Text>
+                <InputForm
+                    label='Nombre'
+                    onChange={setName}
+                />
+                <InputForm
+                    label='Apellido'
+                    onChange={setLastName}
+                />
+                <InputForm
+                    label='Email'
+                    onChange={setEmail}
+                    error={errorEmail}
+                />
+                <InputForm
+                    label='Edad'
+                    onChange={setAge}
+                />
+                <InputSelectForm
+                    label='Sexo'
+                    onChange={setSex}
+                    options={['male','female']}
+                />
+                <InputForm
+                    label='Contraseña'
+                    onChange={setPassword}
+                    isSecure={true}
+                    error={errorPassword}
+                />
+                <InputForm
+                    label='Confirmar contraseña'
+                    onChange={setConfirmPassword}
+                    isSecure={true}
+                    error={errorConfirmPassword}
+                />
+                <SubmitButton title='Siguiente' onPress={onSubmit}/>
             </View>
         </View>
     )
