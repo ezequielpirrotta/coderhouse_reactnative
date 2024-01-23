@@ -32,7 +32,7 @@ const Interests = ({navigation}: StackRegisterScreenProps) => {
    return (
       <View style={styles.main}>
          <View style={styles.container}>
-            <Text style={styles.title}>Register</Text>
+            <Text style={styles.title}>Que te gusta?</Text>
             <InputForm
                label='Intereses'
                onChange={setInterests}

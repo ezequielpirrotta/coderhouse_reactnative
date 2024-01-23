@@ -23,7 +23,7 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
             if(result.isSuccess) {
                console.log(registerData)
                triggerCreate({
-                  name: registerData.name,
+                  name: registerData.name, 
                   pictures: registerData.pictures,
                   age: registerData.age,
                   home: registerData.home,
@@ -34,6 +34,8 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
                   interests: registerData.interests,
                   matches: [],
                   filter: {}
+               }).then((result: any)=>{
+                  console.log(result)
                })
             }
             else { 
@@ -46,11 +48,18 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
       }
    }
    return (
-      <View>
-         <Text>Listo!</Text>
+      <View style={styles.container}>
          <SubmitButton title='Terminar' onPress={onSubmit}/>
+         <Text>Listo!</Text>
       </View>
    )
 }
+const styles = StyleSheet.create({
+   container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center'
+   }
+})
 
 export default Register

@@ -11,7 +11,6 @@ import ImageSelector from './ImageSelector'
 const Pictures = ({navigation}: StackRegisterScreenProps) => {
    const [pictures,setPictures] = useState<string[]>([])
    const [skip, setSkip] = useState(false)
-   const [launchedPhoto, setLaunchPhoto] = useState(false)
    const dispatch = useRegisterDispatch()
    
    useEffect(()=>{
@@ -30,45 +29,17 @@ const Pictures = ({navigation}: StackRegisterScreenProps) => {
          
       }
    }
-   const handleAddImage = () => {
-      setLaunchPhoto(true)
-   }
    const onAdd = (image: string) => {
-      pictures.push(image)
+      setPictures([...pictures,image])
    }
    return (
-      <>
-         {
-            launchedPhoto?
-               <ImageSelector setShow={setLaunchPhoto} onAdd={onAdd}/>
-               :
-               <View style={styles.main}>
-                  <View style={styles.container}>
-                     <Text style={styles.title}>Incluye algunas fotos de ti</Text>
-                     <FlatList
-                        data={pictures}
-                        keyExtractor={(item,index) => index.toString()}
-                        contentContainerStyle={styles.images}
-                        renderItem={ ({item}) =>
-                           item!=''?
-                              <View style={styles.imageContainer}>
-                                 <Image source={{ uri: item }} style={styles.image} />
-                              </View>
-                              :
-                              <>
-                                 <Pressable style={styles.addImageButton} onPress={handleAddImage}>
-                                    <Text style={styles.addImageText}>+</Text>
-                                 </Pressable>
-                              </>
-                        }
-                     />
-                     <SubmitButton title='Añadir Imagen' onPress={handleAddImage}/>   
-                     <SubmitButton title='Siguiente' onPress={onSubmit}/>
-                     <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
-                     </View>
-                  </View>                  
-         }
-      </>
+      
+      <View style={styles.main}>
+         <Text style={styles.title}>Incluye algunas fotos de ti</Text>
+         <ImageSelector maxImages={5} onAdd={onAdd}/>   
+         <SubmitButton title='Siguiente' onPress={onSubmit}/>
+         <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
+      </View>                  
    )
 }
 
@@ -76,63 +47,9 @@ export default Pictures
 
 const styles = StyleSheet.create({
    main: {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center'
-   },
-   container: {
-      width: '90%',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: colors.darkCream,
-      gap: 15,
-      paddingVertical: 20,
-      borderRadius: 10
-   },
-   images: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: colors.darkCream,
-      gap: 20,
-   },
-   image: {
-      width: 200,
-      height: 200
-   },
-   imageContainer: {
-      width: 80,
-      height: 80,
-      borderWidth: 2,
-      borderColor: 'black',
-      padding: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-   },
-   noPhotoContainer:{
-      width: 200,
-      height: 200,
-      borderWidth: 2,
-      borderColor: 'black',
-      padding: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-   },
-   addImageButton: {
-      width: 80,
-      height: 80,
-      borderWidth: 2,
-      borderColor: 'black',
-      padding: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'white',
-   },
-   addImageText: {
-      fontSize: 32,
-      fontWeight: 'bold',
+      alignItems: 'center'
    },
    title: {
       fontSize: 25,

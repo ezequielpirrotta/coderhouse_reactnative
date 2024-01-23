@@ -15,7 +15,7 @@ const UserHome = ({navigation}: StackRegisterScreenProps) => {
       if(skip){
          navigation.navigate('GenderData')
       }
-   },[])
+   },[skip])
    const onSubmit = () => {
       try {
          if(userHome != '') {
@@ -23,6 +23,7 @@ const UserHome = ({navigation}: StackRegisterScreenProps) => {
             navigation.navigate('GenderData')
          }
       }
+      
       catch(error: any) {
          
       }
