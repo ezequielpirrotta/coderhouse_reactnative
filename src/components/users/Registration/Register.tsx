@@ -1,17 +1,15 @@
 
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { StackRegisterScreenProps, StackScreenProps } from '../../../data/navigationTypes'
-
-import { useCreateUserMutation, useGetUserQuery, useRegisterMutation } from '../../../app/servicies'
-
+import React from 'react'
+import { StackRegisterScreenProps } from '../../../data/navigationTypes'
+import { useCreateUserMutation, useRegisterMutation } from '../../../app/servicies'
 import SubmitButton from '../../SubmitButton'
 import { useRegisterSelector } from '../../../app/hooks'
 
 
 const Register = ({navigation}: StackRegisterScreenProps) => {
    
-   const [triggerRegister, result] = useRegisterMutation()
+   const [triggerRegister, registerResult] = useRegisterMutation()
    const [triggerCreate] = useCreateUserMutation()
    const registerData = useRegisterSelector((state) => state.register)
    const onSubmit = () => {
@@ -19,9 +17,10 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
          triggerRegister({
             email: registerData.email,
             password: registerData.password,
-         }).then(()=>{
-            if(result.isSuccess) {
-               console.log(registerData)
+         }).then((result1)=>{
+            console.log('Resultado de registro: ',result1.error)
+            if(registerResult.isSuccess) {
+               console.log('Data de registro',registerData)
                triggerCreate({
                   name: registerData.name, 
                   pictures: registerData.pictures,
@@ -35,11 +34,18 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
                   matches: [],
                   filter: {}
                }).then((result: any)=>{
-                  console.log(result)
+                  console.log('Resultado exitoso: ',result)
+               }).catch((error)=>{
+                  console.log('Error creando usuario: ',error)
                })
             }
             else { 
-               console.log(result.error)
+               if(registerResult.data.error){
+                  console.log('Error: ',registerResult.data?.error.message)
+               }
+               else {
+                  console.log('Error: ',registerResult.data)
+               }
             }
          })
       }

@@ -18,12 +18,11 @@ const MainNavigator = () => {
    useEffect(() => {
       
       (async () => {
-         console.log(token)
+         console.log('Token',token)
          try {
             const session: ResultSet | void = await fetchSession()
             .then(()=>{ 
-               console.log("Session:")
-               console.log(session)
+               console.log("Session: ",session)
                if(session?.rows.length) {
                   const user = session.rows._array[0]
                   dispatch(setUser(user))
@@ -39,14 +38,13 @@ const MainNavigator = () => {
       })
       console.log('Email de usuario:',email)
       if(!error&&!isLoading) {
-         console.log(userData)
+         console.log('Data de usuario',userData)
          const currentUser: UserState = {
             data: userData[Object.keys(userData)[0]],
             isLoading: isLoading,
             error: error
          };
-         console.log("Usuario encontrado: ")
-         console.log(currentUser)
+         console.log("Usuario encontrado: ",currentUser)
          dispatch(setCurrentUser(currentUser))
       }
    },[token])

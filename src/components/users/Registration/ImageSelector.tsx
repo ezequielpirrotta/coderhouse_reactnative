@@ -99,8 +99,8 @@ const ImagePickerContainer = ({ image, onPickImage, onTakeImage, onConfirm }: an
    return (
      <View style={styles.noPhotoContainer}>
        <Text>No hay foto que mostrar</Text>
-       <SubmitButton title="Tomar Foto" onPress={onTakeImage} />
-       <SubmitButton title="Selecciona una Foto" onPress={onPickImage} />
+       <SubmitButton title="Tomar Foto" onPress={onTakeImage} titleStyle={styles.button}/>
+       <SubmitButton title="Selecciona una Foto" onPress={onPickImage} titleStyle={styles.button}/>
      </View>
    );
  };
@@ -193,7 +193,10 @@ const styles = StyleSheet.create({
     },
     buttonText: {
       color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: 12,
+      fontWeight: 'bold'
     },
+    buttonTextSmall: {
+      fontSize: 10,
+    }
 })

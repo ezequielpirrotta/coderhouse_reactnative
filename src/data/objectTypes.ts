@@ -63,6 +63,7 @@ export type AuthState = {
 }
 export type ButtonParams = {
    title: string
+   titleStyle?:object
    onPress: Function
    color?: string
 }

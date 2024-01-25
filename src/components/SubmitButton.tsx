@@ -3,11 +3,11 @@ import React from 'react'
 import { ButtonParams } from '../data/objectTypes'
 import { colors } from '../global/colors'
 
-const SubmitButton = ({title,onPress}: ButtonParams) => {
+const SubmitButton = ({title,onPress,titleStyle}: ButtonParams) => {
   return (
     <View style={styles.container} >
       <Pressable style={styles.button} onPress={() => {onPress()}}>
-         <Text style={styles.title}>{title}</Text>
+         <Text style={titleStyle?titleStyle:styles.title}>{title}</Text>
       </Pressable>
     </View>
   )
