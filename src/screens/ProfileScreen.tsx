@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import React from 'react'
 import ProfileData from '../components/users/ProfileData'
 
@@ -16,10 +16,11 @@ export default Profile
 const styles = StyleSheet.create({
    container: {
       flex: 1,
+      
       border: '6px',
       borderColor: 'solid black',
+      borderWidth: 3,
       backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
+      justifyContent: 'center',
+   },
 })

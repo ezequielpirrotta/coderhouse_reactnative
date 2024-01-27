@@ -4,7 +4,6 @@ import { User } from '../data/objectTypes'
 import { colors } from '../global/colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import Search from '../components/Search'
-import uuid from 'react-native-uuid';
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 
 const UserCard = () => {

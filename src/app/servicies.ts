@@ -31,20 +31,27 @@ export const userApi = createApi({
    tagTypes: ["users"],
    endpoints: (builder) => ({
       getUser: builder.query({
-         query: (username) => `users.json?orderByChild=username&equalTo=${username}`,
+         query: (localId) => `users/${localId}.json`,
          providesTags: ["users"]
       }),
       createUser: builder.mutation({
-         query: (body) => ({
-            url: `users.json`,
-            method: 'POST',
-            body
+         query: ({localId,data}) => ({
+            url: `users/${localId}.json`,
+            method: 'PUT',
+            body: data
+         })
+      }),
+      updateUser: builder.mutation({
+         query: ({localId,data}) => ({
+            url: `users/${localId}.json`,
+            method: 'PUT',
+            body: data
          })
       })
    })
 })
 
-export const { useGetUserQuery, useCreateUserMutation} = userApi
+export const { useGetUserQuery, useCreateUserMutation, useUpdateUserMutation} = userApi
 
 export const gendersApi = createApi({
    reducerPath: 'gendersApi',

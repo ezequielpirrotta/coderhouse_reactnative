@@ -29,7 +29,7 @@ const RegisterNavigator = ({navigation}: StackScreenProps) => {
                headerShown:false
             }}
          >
-            <RootStack.Screen name='MainData' component={MainData} options={{title:'Informacion basica'}}/>
+            <RootStack.Screen name='MainData'  component={MainData} options={{title:'Informacion basica'}}/>
             <RootStack.Screen name='UserHome' component={UserHome} />
             <RootStack.Screen name='GenderData' component={GenderData} />
             <RootStack.Screen name='Interests' component={Interests} />

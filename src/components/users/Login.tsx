@@ -6,7 +6,7 @@ import { setUser } from '../../features/users/authSlice';
 import SubmitButton from '../SubmitButton';
 import { colors } from '../../global/colors';
 import { StackScreenProps } from '../../data/navigationTypes';
-import { useLoginMutation } from '../../app/servicies';
+import { useGetUserQuery, useLoginMutation } from '../../app/servicies';
 import { signInSchema } from '../../validations/signInSchema';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { insertSession } from '../../database';
@@ -26,32 +26,40 @@ const Login = ({navigation}: StackScreenProps) => {
       try {
          if (isSuccess && !isLoading){
             console.log("Data sesion:",data)
-            if(data)
-            insertSession({email:data.email, token: data.idToken, localId: data.localId})
-               .then((result)=>{
-                  console.log('Sesion guardada:',result)
-                  dispatch(setUser({email:data.email, token: data.idToken, localId: data.localId}))
-               })
-               .catch(error => console.log('Error guardando sesión:',error))
+            if(data){
+               insertSession({localId: data.localId, email:data.email, token: data.idToken})
+                  .then((result)=>{
+                     console.log('Sesion guardada:',result)
+                     dispatch(setUser({email:data.email, token: data.idToken, localId: data.localId}))
+                  })
+                  .catch(error => console.log('Error guardando sesión:',error))
+            }
          }
          else if(isError){
             setTextError(error?.data?.error.message)
             setShowAlert(true)
          }
       }
-      catch(error) {
+      catch(error: any) {
          console.log('Error:',error)
+         setTextError(error)
+         setShowAlert(true)
       }
    },[isSuccess])
-   useEffect(()=>{
-      setErrorUsername('')
-      setErrorPassword('')
-   },[username,password,isLoading])
+   
 
    const onSubmit = () => {
       try{
-         const validation = signInSchema.validateSync({email: username,password})
+         signInSchema.validateSync({email: username,password})
          triggerLogin({email: username,password})
+         .then((result)=>{
+            console.log(result)
+            setUsername('')
+            setPassword('')
+         })
+         .catch((error) =>{
+            console.log('Error:',error)
+         })
       }
       catch(error: any) {
          switch (error.path) {

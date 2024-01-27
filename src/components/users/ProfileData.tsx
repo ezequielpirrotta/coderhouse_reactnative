@@ -1,37 +1,69 @@
 import React, { useEffect, useState } from 'react'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { StyleSheet, Text, View, Button, FlatList,Modal, Dimensions, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList,Modal, Dimensions, Image, ActivityIndicator, Pressable, ScrollView } from 'react-native';
 import { colors } from '../../global/colors'
 import { Filter, User } from '../../data/objectTypes';
 import { Slider } from '@miblanchard/react-native-slider';
 import SliderContainer from '../SliderContainer';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { updateUser } from '../../features/users/userSlice';
+import SubmitButton from '../SubmitButton';
+import { deleteSession } from '../../database';
+import { logOut } from '../../features/users/authSlice';
+import { MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
+import ImageSelector from './Registration/ImageSelector';
+import { useGetUserQuery, useUpdateUserMutation } from '../../app/servicies';
 
 const ProfileData = () => {
    const {data:user,isLoading,error} = useAppSelector((state) => state.user)
-   const token = useAppSelector((state) => state.auth.token)
+   const {localId} = useAppSelector((state) => state.auth)
    const [modalVisible, setModalVisible] = useState(false);
    const [itemSelected, setItemSelected] = useState('')
    const [showAlert, setShowAlert] = useState(false);
    const [didEdit, setDidEdit] = useState(false)
    const [userFilters, setUserFilters] = useState(user?.filter || {})
+   const [showImagePick, setShowImagePick] = useState(false)
+   const dispatch = useAppDispatch()
+   const [updateUserProfile] = useUpdateUserMutation();
+   const {data,isSuccess} = useGetUserQuery(localId)
 
+   useEffect(()=>{
+      if(isSuccess) {
+         
+      }
+   },[user])
    const onValueChange = (filters: Filter | undefined) => {
       setDidEdit(true)
       setUserFilters(current=>filters?filters:current)
    }
-   useEffect(()=>{
-      console.log("Perfil")
-      console.log(token)
-      console.log(user)
-   },[user])
+   const onEditProfilePic = async (images: string[]) => {
+      if(user) {
+         let newUser = {...user}
+         console.log('Imagenes',images)
+         newUser.pictures = images 
+         console.log('Nuevo usuario',newUser)
+         try {
+
+            const updateResult = await updateUserProfile({localId, data: newUser})
+            if('data' in updateResult){
+               dispatch(updateUser(updateResult.data))
+               setShowImagePick(!showImagePick)
+            }
+            console.log('Resultado exitoso: ',updateResult)
+         }
+         
+         catch(error:any) {
+            console.log('Error editando usuario: ',error)
+         }
+      }
+   }
    const onEdit = () => {
       let newData: User | null = user
       if(newData){
          newData.filter=userFilters
-         updateUser(newData)
+         dispatch(updateUser(newData))
+         updateUserProfile({localId,data: newData})
          setDidEdit(false)
       }
    }
@@ -39,37 +71,40 @@ const ProfileData = () => {
       setItemSelected(id);
       setModalVisible(true);
    }
-   const onDeleteConfirm = () => {
-   }
    
-   const getUserMatched = () => {
-      /*const users: User = {}
-      if(user){
-         const matchedUsers = [].filter((currentUser)=>{
-         let match = false;
-         user.matches.forEach(element => {
-            if(currentUser.id===element.userId){
-               match = true;
-            }
-         });
-         return match
-         })
-         return matchedUsers
-      }*/
+   const onLogOut = async() => {
+      dispatch(logOut())
+      await deleteSession(localId)
    }
-   
    return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
          {
-         user? 
-            <>
+         user?
+            !showImagePick?
+               <>
+               <View style={styles.logOutContainer}>
+                  <Pressable style={styles.logOutbutton} onPress={onLogOut}>
+                     <MaterialIcons name="logout" size={32} color="black" />
+                     <Text>Cerrar sesion</Text>
+                  </Pressable>
+               </View>
                <View style={styles.userData}>
                   <View style={styles.profile}>
-                     {
-                        user.pictures?
-                           <Image source={{uri:user.pictures[0]}} style={styles.image}/>
-                           :null
-                     }
+                     <View style={styles.profilePic}>
+                        <View>
+                           {
+                              user.pictures?
+                                 <Image source={{uri:user.pictures[0]}} style={styles.image}/>
+                                 :
+                                 <Image source={require('../../../assets/images/deafultProfilePic.jpg')} style={styles.image}/>
+                           }
+                        </View>
+                        <View style={styles.editContainer}>
+                           <Pressable onPress={()=>{setShowImagePick(true)}} >
+                              <Feather name="edit" size={32} color="black" style={styles.featherIcon}/>
+                           </Pressable>
+                        </View>
+                     </View>
                      <Text style={styles.name}>{user.name}, {user.age}</Text>
                   </View>
                   <View style={styles.preferences}>
@@ -124,56 +159,88 @@ const ProfileData = () => {
                      />
                   </View>
                </View>
-               <View style={styles.list}>
-               
-               <Modal animationType='fade' visible={modalVisible}>
-                  <View style={styles.modal}>
-                     <Text>Esta seguro de que quiere eliminar la tarea?</Text>
-                     <View style={styles.modal_buttons}>
-                     <Button color={'red'} title='Eliminar' onPress={()=>{onDeleteConfirm()}}></Button>
-                     <Button title='Cancelar' onPress={()=>{setModalVisible(false)}}></Button>
-                     </View>
-                  </View>
-               </Modal>
+               </>
+               :
+               <View style={styles.imageSelectorContainer}>
+                  <Pressable onPress={()=>{setShowImagePick(false)}} style={styles.backButton}>
+                     <AntDesign name="back" size={24} color="black" />
+                  </Pressable>
+                  <ImageSelector maxImages={5} currentImages={user.pictures?user.pictures:[]} onAdd={onEditProfilePic}/>
                </View>
-            </>
          :isLoading?
 
             <ActivityIndicator size="large"/>
             :
-            <Text>{error?.message}</Text>
+            <Text>Error: {error?.toString()}</Text>
          }
-      </View>
+      </ScrollView>
    )
 }
 
 export default ProfileData
 
 const windowWidth = Dimensions.get('window').width 
+const windowHeight = Dimensions.get('window').width 
 const styles = StyleSheet.create({
 
    container: {
+      width: '100%',
       backgroundColor: colors.darkCream,
-      justifyContent: "center",
-      alignItems: "center"
+      justifyContent: 'flex-start',
+      alignItems: "center",
+      paddingTop: 20,
+      paddingBottom: 20
    },
-   profile:{
-      gap: 10,
+   logOutContainer: {
+      width: '50%',
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      padding: 10
+   },
+   editContainer: {
+      backgroundColor: colors.red
+   },
+   profile:{
+      gap: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 10,
       paddingBottom: 30
+   },
+   profilePic: {
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: 10
+      
    },
    image:{
       minWidth: 90,
       minHeight: 90,
-      width: windowWidth/5,
+      width: windowWidth/2,
+      height: windowHeight/2,
       resizeMode: 'contain',
-      borderRadius: 50
+      borderRadius: 90,
+      borderColor: 'black',
+      borderWidth: 2
+   },
+   imageSelectorContainer: {
+      padding: 20
+   },
+   featherIcon: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
    },
    name: {
       fontSize: 24,
       fontFamily: 'JosefinBold'
+   },
+   logOutbutton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.green,
+      borderRadius: 10,
+      width: '100%'
    },
    preferences: {
       justifyContent: 'center',
@@ -195,8 +262,7 @@ const styles = StyleSheet.create({
       width: '50%'
    },
    userData: {
-      flex:1,
-      justifyContent:'center',
+      justifyContent: 'flex-start',
       alignItems: 'center'
    },
    sliderTitle: {
@@ -214,23 +280,11 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       gap: 6,
    },
-   task: {
-      flex: 1,
-      border: '3px',
-      borderWidth: 3,
-      borderColor: 'black',
-      margin: 10,
-      padding: 30,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center'
-   },
-   taskText: {
-      margin: 5,
-      width: '60%',	
-   },
    buttons: {
       padding: 10,
+   },
+   backButton: {
+      
    },
    modal_buttons: {
       padding: 4,

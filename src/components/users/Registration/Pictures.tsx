@@ -29,8 +29,8 @@ const Pictures = ({navigation}: StackRegisterScreenProps) => {
          
       }
    }
-   const onAdd = (image: string) => {
-      setPictures([...pictures,image])
+   const onAdd = (images: string[]) => {
+      setPictures(images)
    }
    return (
       

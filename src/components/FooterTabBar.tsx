@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         elevation: 6,
         position: 'absolute', 
+        padding: 10,
         left: 0, 
         right: 0, 
         bottom: 0,

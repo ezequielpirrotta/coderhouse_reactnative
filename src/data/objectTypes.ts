@@ -14,7 +14,7 @@ export type User = {
 export type UserState = {
    isLoading: boolean
    data: User|null
-   error: Error | null | undefined
+   error: object | null | undefined
 }
 export type RegisterState = {
    name: string
@@ -65,7 +65,7 @@ export type ButtonParams = {
    title: string
    titleStyle?:object
    onPress: Function
-   color?: string
+   buttonColor?: object
 }
 export type Error = {
    message: string
@@ -74,4 +74,9 @@ export type sessionInsert = {
    localId: string,
    email: string | null,
    token: string | null
+}
+export type ImageSelectorType = {
+   onAdd: (images: string[]) => void;
+   maxImages?: number
+   currentImages?: string[]
 }

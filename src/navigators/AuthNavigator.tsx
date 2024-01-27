@@ -1,19 +1,16 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native'
-import Login from '../components/users/Login';
-import Register from './RegisterNavigator';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Header from '../components/Header';
+import React, { useEffect } from 'react'
+import { StyleSheet } from 'react-native'
 import { RootStackParamList } from '../data/navigationTypes';
-import { Provider } from 'react-redux';
-import { registerStore } from '../app/Register/registerStore';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Login from '../components/users/Login';
+import Header from '../components/Header';
 import RegisterNavigator from './RegisterNavigator';
 
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 const AuthNavigator = () => {
+   
    return (
       <RootStack.Navigator initialRouteName='Login'>
          <RootStack.Screen name='Login' component={Login} 

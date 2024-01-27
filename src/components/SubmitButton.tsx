@@ -3,7 +3,7 @@ import React from 'react'
 import { ButtonParams } from '../data/objectTypes'
 import { colors } from '../global/colors'
 
-const SubmitButton = ({title,onPress,titleStyle}: ButtonParams) => {
+const SubmitButton = ({title,onPress,titleStyle,buttonColor}: ButtonParams) => {
   return (
     <View style={styles.container} >
       <Pressable style={styles.button} onPress={() => {onPress()}}>
@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: colors.green,
       borderRadius: 10,
+      borderWidth: 3,
       width: '100%'
    },
    title: {

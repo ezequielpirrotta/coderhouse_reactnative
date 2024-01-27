@@ -38,8 +38,8 @@ export const insertSession = ({localId,email,token}: sessionInsert) => {
    })
    return promise
 }
-export const fetchSession = () => {
-   const promise = new Promise((resolve, reject) => {
+export const fetchSession = ():Promise<SQLite.SQLResultSet> => {
+   const promise = new Promise<SQLite.SQLResultSet>((resolve, reject) => {
       db.transaction(tx => {
          tx.executeSql(
             `SELECT * FROM sessions`,
@@ -55,14 +55,14 @@ export const fetchSession = () => {
    })
    return promise
 }
-export const deleteSession = (localId: string) => {
-   const promise = new Promise((resolve, reject) => {
+export const deleteSession = (localId: string): Promise<SQLite.SQLResultSet> => {
+   const promise = new Promise<SQLite.SQLResultSet>((resolve, reject) => {
       db.transaction(tx => {
          tx.executeSql(
             `DELETE FROM sessions WHERE localId = ?`,
             [localId],
-            (result) => resolve(result),
-            (error) => {
+            (_,result) => resolve(result),
+            (_,error) => {
                reject(error)
                return true
             }
@@ -72,14 +72,14 @@ export const deleteSession = (localId: string) => {
    })
    return promise
 }
-export const deleteTable = () => {
-   const promise = new Promise((resolve, reject) => {
+export const deleteTable = (): Promise<SQLite.SQLResultSet> => {
+   const promise = new Promise<SQLite.SQLResultSet>((resolve, reject) => {
       db.transaction(tx => {
          tx.executeSql(
             `DROP TABLE sessions`,
             [],
-            (result) => resolve(result),
-            (error) => {
+            (_,result) => resolve(result),
+            (_,error) => {
                reject(error)
                return true
             }

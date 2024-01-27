@@ -5,53 +5,46 @@ import TabNavigator from './TabNavigator'
 import AuthNavigator from './AuthNavigator'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useGetUserQuery } from '../app/servicies'
-import { UserState } from '../data/objectTypes'
-import { setCurrentUser } from '../features/users/userSlice'
 import { fetchSession } from '../database'
 import { setUser } from '../features/users/authSlice'
-import { ResultSet } from 'expo-sqlite'
+import { setCurrentUser } from '../features/users/userSlice'
+import { UserState } from '../data/objectTypes'
 
 const MainNavigator = () => {
    const dispatch = useAppDispatch()
-   const {token,email} = useAppSelector((state) => state.auth)
-   const {data: userData,isLoading,error} = useGetUserQuery({username: email})
+   const {token, localId} = useAppSelector((state) => state.auth)
+   const result = useGetUserQuery(localId)
    useEffect(() => {
       
       (async () => {
-         console.log('Token',token)
          try {
-            const session: ResultSet | void = await fetchSession()
-            .then(()=>{ 
-               console.log("Session: ",session)
-               if(session?.rows.length) {
-                  const user = session.rows._array[0]
-                  dispatch(setUser(user))
-               }
-            })
-            .catch((error)=> {
-               throw(error)
-            })
+            const session  = await fetchSession()
+            if(session?.rows.length>0) {
+               const user = session.rows._array[0]
+               dispatch(setUser(user))
+            }
          }
          catch(error) {
             console.log('Error getting session', error)
          }
-      })
-      console.log('Email de usuario:',email)
-      if(!error&&!isLoading) {
-         console.log('Data de usuario',userData)
-         const currentUser: UserState = {
-            data: userData[Object.keys(userData)[0]],
-            isLoading: isLoading,
-            error: error
-         };
-         console.log("Usuario encontrado: ",currentUser)
-         dispatch(setCurrentUser(currentUser))
-      }
+      })()
    },[token])
+   useEffect(()=>{
+      
+      if(localId!=''&&result.isSuccess) {
+         
+         const userData: UserState = {
+            data: result.data?result.data:null,
+            isLoading: false,
+            error: null
+         }
+         dispatch(setCurrentUser(userData))
+      }
+   },[localId,result])
    return (
       <NavigationContainer>
          {
-            token ? <TabNavigator/> : <AuthNavigator/>
+            localId ? <TabNavigator/> : <AuthNavigator/>
          }
       </NavigationContainer> 
    )
