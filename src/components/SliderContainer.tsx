@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     sliderContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: 400,
+        width: 300,
+        margin: 5
         //addingVertical: 16,
     },
     titleContainer: {

@@ -1,6 +1,6 @@
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import InputForm from './InputForm';
+import InputForm from '../InputForm';
 import { useAppDispatch } from '../../app/hooks';
 import { setUser } from '../../features/users/authSlice';
 import SubmitButton from '../SubmitButton';

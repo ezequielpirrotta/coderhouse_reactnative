@@ -4,7 +4,7 @@ import { colors } from '../global/colors'
 import { Entypo, Ionicons } from '@expo/vector-icons';
 
 
-const FooterTabBar = ({navigation}: any) => {
+const BottomTabBar = ({navigation}: any) => {
    return (
       <View style={styles.container}>
          <View style={styles.buttons}>
@@ -22,7 +22,7 @@ const FooterTabBar = ({navigation}: any) => {
    )
 }
 
-export default FooterTabBar
+export default BottomTabBar
 
 const styles = StyleSheet.create({
     container: {

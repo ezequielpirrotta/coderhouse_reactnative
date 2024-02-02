@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
-import { InputSelectFormProps } from '../../data/objectTypes'
+import { InputSelectFormProps } from '../data/objectTypes'
 import SelectDropdown from 'react-native-select-dropdown'
 
 const InputSelectForm = ({label,onChange,options}: InputSelectFormProps) => {

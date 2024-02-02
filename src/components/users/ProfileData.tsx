@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { StyleSheet, Text, View, Button, FlatList,Modal, Dimensions, Image, ActivityIndicator, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList,Modal, Dimensions, Image, ActivityIndicator, Pressable, ScrollView, TextInput } from 'react-native';
 import { colors } from '../../global/colors'
 import { Filter, User } from '../../data/objectTypes';
 import { Slider } from '@miblanchard/react-native-slider';
@@ -14,6 +13,8 @@ import { logOut } from '../../features/users/authSlice';
 import { MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
 import ImageSelector from './Registration/ImageSelector';
 import { useGetUserQuery, useUpdateUserMutation } from '../../app/servicies';
+import EditButton from './EditButton';
+import MapPreview from '../MapPreview';
 
 const ProfileData = () => {
    const {data:user,isLoading,error} = useAppSelector((state) => state.user)
@@ -22,7 +23,7 @@ const ProfileData = () => {
    const [itemSelected, setItemSelected] = useState('')
    const [showAlert, setShowAlert] = useState(false);
    const [didEdit, setDidEdit] = useState(false)
-   const [userFilters, setUserFilters] = useState(user?.filter || {})
+   const [userFilters, setUserFilters] = useState(user?.filters || {})
    const [showImagePick, setShowImagePick] = useState(false)
    const dispatch = useAppDispatch()
    const [updateUserProfile] = useUpdateUserMutation();
@@ -30,13 +31,35 @@ const ProfileData = () => {
 
    useEffect(()=>{
       if(isSuccess) {
-         
+         //console.log(user?.location)
       }
-   },[user])
-   const onValueChange = (filters: Filter | undefined) => {
+   },[user,didEdit])
+   const onAgeRangeChange = (filters: Filter | undefined) => {
+      console.log(filters)
       setDidEdit(true)
       setUserFilters(current=>filters?filters:current)
    }
+   /*const onEditProfileLocation = async () => {
+      if(user) {
+         let newUser = {...user}
+         console.log('Location',location)
+         newUser.location = location 
+         console.log('Nuevo usuario',newUser)
+         try {
+
+            const updateResult = await updateUserProfile({localId, data: newUser})
+            if('data' in updateResult){
+               dispatch(updateUser(updateResult.data))
+               
+            }
+            console.log('Resultado exitoso: ',updateResult)
+         }
+         
+         catch(error:any) {
+            console.log('Error editando usuario: ',error)
+         }
+      }
+   }*/
    const onEditProfilePic = async (images: string[]) => {
       if(user) {
          let newUser = {...user}
@@ -61,11 +84,15 @@ const ProfileData = () => {
    const onEdit = () => {
       let newData: User | null = user
       if(newData){
-         newData.filter=userFilters
+         newData.filters=userFilters
          dispatch(updateUser(newData))
          updateUserProfile({localId,data: newData})
          setDidEdit(false)
       }
+   }
+   const onSave = () => {
+      
+      setShowAlert(true)
    }
    const onDelete = (id:string) => {
       setItemSelected(id);
@@ -78,8 +105,7 @@ const ProfileData = () => {
    }
    return (
       <ScrollView contentContainerStyle={styles.container}>
-         {
-         user?
+         {user?
             !showImagePick?
                <>
                <View style={styles.logOutContainer}>
@@ -88,42 +114,75 @@ const ProfileData = () => {
                      <Text>Cerrar sesion</Text>
                   </Pressable>
                </View>
-               <View style={styles.userData}>
+               <ScrollView contentContainerStyle={styles.userData}>
                   <View style={styles.profile}>
                      <View style={styles.profilePic}>
                         <View>
-                           {
-                              user.pictures?
-                                 <Image source={{uri:user.pictures[0]}} style={styles.image}/>
-                                 :
-                                 <Image source={require('../../../assets/images/deafultProfilePic.jpg')} style={styles.image}/>
-                           }
-                        </View>
-                        <View style={styles.editContainer}>
-                           <Pressable onPress={()=>{setShowImagePick(true)}} >
-                              <Feather name="edit" size={32} color="black" style={styles.featherIcon}/>
+                           <Pressable onPress={()=>{}}>
+                              {
+                                 user.pictures?
+                                    <Image source={{uri:user.pictures[0]}} style={styles.image}/>
+                                    :
+                                    <Image source={require('../../../assets/images/deafultProfilePic.jpg')} style={styles.image}/>
+                              }
                            </Pressable>
+                           <EditButton onPress={()=>{setShowImagePick(true)}}/>
                         </View>
                      </View>
                      <Text style={styles.name}>{user.name}, {user.age}</Text>
+                     <View style={styles.bioContainer}>
+                        <TextInput numberOfLines={5} style={styles.bio}>{user.bio?user.bio:"Sin biografía"}</TextInput>
+                        <SubmitButton title='Guardar' onPress={()=>{setShowImagePick(true)}}/>
+                     </View>
                   </View>
+                  {
+                     user.location?
+                        <MapPreview {...user.location} />
+                        :
+                        null
+                  }
                   <View style={styles.preferences}>
                      <Text style={styles.prefsTitle}>Preferencias</Text>
-                     {user?.filter?.ageRange?
+                     {user.filters?.ageRange && user.filters?.ageRange.length > 0?
                         <>
                            <SliderContainer
                               caption="Age"
-                              sliderValue={[user?.filter.ageRange[0],user?.filter.ageRange[1]]}
-                              onValueChange={onValueChange}>
+                              sliderValue={[user?.filters.ageRange[0],user?.filters.ageRange[1]]}
+                              onValueChange={()=>onAgeRangeChange}>
                               <Slider
-                              animateTransitions
-                              maximumTrackTintColor="#d3d3d3"
-                              maximumValue={80}
-                              minimumTrackTintColor="#1fb28a"
-                              minimumValue={18}
-                              step={1}
-                              thumbTintColor="#1a9274"
-                              containerStyle={styles.slider}
+                                 animateTransitions
+                                 maximumTrackTintColor="#d3d3d3"
+                                 maximumValue={80}
+                                 minimumTrackTintColor="#1fb28a"
+                                 minimumValue={18}
+                                 step={1}
+                                 thumbTintColor="#1a9274"
+                                 containerStyle={styles.slider}
+                              />
+                           </SliderContainer>
+                           {
+                              didEdit?
+                              <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
+                              :null
+                           }
+                        </>
+                        :
+                        null
+                     }{user.filters?.distanceRange && user.filters?.distanceRange.length > 0?
+                        <>
+                           <SliderContainer
+                              caption="Distancia"
+                              sliderValue={[user?.filters.distanceRange[0],user?.filters.distanceRange[1]]}
+                              onValueChange={()=>onAgeRangeChange()}>
+                              <Slider
+                                 animateTransitions
+                                 maximumTrackTintColor="#d3d3d3"
+                                 maximumValue={80}
+                                 minimumTrackTintColor="#1fb28a"
+                                 minimumValue={18}
+                                 step={1}
+                                 thumbTintColor="#1a9274"
+                                 containerStyle={styles.slider}
                               />
                            </SliderContainer>
                            {
@@ -138,18 +197,17 @@ const ProfileData = () => {
                      <AwesomeAlert
                         show={showAlert}
                         showProgress={false}
-                        title="Estás seguro que querés cambiar la edad?"
+                        title="Guardar los cambios?"
                         closeOnTouchOutside={true}
                         closeOnHardwareBackPress={false}
-                        showConfirmButton={true}
                         showCancelButton={true}
-                        confirmText='SI'
+                        showConfirmButton={true}
                         cancelText='NO'
-                        confirmButtonColor="#DD6B55"
+                        confirmText='SI'
+                        confirmButtonColor={colors.green}
                         onCancelPressed={() => {
-                           ()=>{
-            
-                           }
+                           setDidEdit(false)
+                           setUserFilters(user.filters)
                            setShowAlert(false);
                         }}
                         onConfirmPressed={() => {
@@ -158,7 +216,7 @@ const ProfileData = () => {
                         }}
                      />
                   </View>
-               </View>
+               </ScrollView>
                </>
                :
                <View style={styles.imageSelectorContainer}>
@@ -167,11 +225,10 @@ const ProfileData = () => {
                   </Pressable>
                   <ImageSelector maxImages={5} currentImages={user.pictures?user.pictures:[]} onAdd={onEditProfilePic}/>
                </View>
-         :isLoading?
-
-            <ActivityIndicator size="large"/>
-            :
-            <Text>Error: {error?.toString()}</Text>
+            :isLoading?
+               <ActivityIndicator size="large"/>
+               :
+               <Text>Error: {error?.toString()}</Text>
          }
       </ScrollView>
    )
@@ -197,9 +254,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       padding: 10
    },
-   editContainer: {
-      backgroundColor: colors.red
-   },
    profile:{
       gap: 5,
       justifyContent: 'center',
@@ -221,19 +275,17 @@ const styles = StyleSheet.create({
       resizeMode: 'contain',
       borderRadius: 90,
       borderColor: 'black',
-      borderWidth: 2
+      borderWidth: 4
    },
    imageSelectorContainer: {
       padding: 20
    },
-   featherIcon: {
-      position: 'absolute',
-      bottom: 0,
-      right: 0,
-   },
    name: {
       fontSize: 24,
       fontFamily: 'JosefinBold'
+   },
+   bio: {
+      textAlign: 'justify'
    },
    logOutbutton: {
       justifyContent: 'center',
@@ -245,7 +297,8 @@ const styles = StyleSheet.create({
    preferences: {
       justifyContent: 'center',
       alignItems: 'center',
-      padding:20,
+      margin: 10,
+      padding: 20,
       backgroundColor:'#d9d9d9',
       shadowColor: "#000000",
       shadowOpacity: 0.8,
@@ -259,14 +312,23 @@ const styles = StyleSheet.create({
       fontSize: 20
    },
    slider: {
-      width: '50%'
+      width: '90%'
    },
    userData: {
       justifyContent: 'flex-start',
-      alignItems: 'center'
+      alignItems: 'center',
+      margin: 5
    },
-   sliderTitle: {
-      
+   bioContainer: {
+      justifyContent:'center',
+      alignItems: 'center',
+      backgroundColor: colors.yellow,
+      padding: 10,
+      margin: 10,
+      width: windowWidth/1.2,
+      height: 200,
+      borderWidth: 3,
+      borderRadius: 7,
    },
    modal: {
       flex: 1,

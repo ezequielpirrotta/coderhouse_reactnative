@@ -9,7 +9,8 @@ export type User = {
    likes: string[]
    interests: string[]
    matches: Match[]
-   filter: Filter
+   filters: Filter
+   location?:  Location
 }
 export type UserState = {
    isLoading: boolean
@@ -26,9 +27,14 @@ export type RegisterState = {
    home: string
    pictures: string[],
    bio: string,
+   filters: Filter
    interests: string[],
 }
-
+export type Location = {
+   latitude: string,
+   longitude: string,
+   adress?: string
+}
 export type RegisterBasics = {
    name: string,
    email: string,
@@ -42,7 +48,7 @@ export type Match = {
 }
 export type Filter = {
    ageRange?: [number, number]
-   location?: string
+   distanceRange?: [number,number]
    commonInterests?: string[]
 }
 export type InputFormProps = {
@@ -62,7 +68,7 @@ export type AuthState = {
    localId: string
 }
 export type ButtonParams = {
-   title: string
+   title?: string
    titleStyle?:object
    onPress: Function
    buttonColor?: object

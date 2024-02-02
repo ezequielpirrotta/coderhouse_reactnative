@@ -1,13 +1,13 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../../global/colors'
-import InputForm from '../InputForm'
+import InputForm from '../../InputForm'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
 import { signUpSchema } from '../../../validations/signUpSchema'
 import { useAppDispatch, useRegisterDispatch } from '../../../app/hooks'
 import { setBasics } from '../../../features/users/registerSlice'
-import InputSelectForm from '../InputSelectForm'
+import InputSelectForm from '../../InputSelectForm'
 
 const MainData = ({navigation}: StackRegisterScreenProps) => {
     const [name,setName] = useState('')

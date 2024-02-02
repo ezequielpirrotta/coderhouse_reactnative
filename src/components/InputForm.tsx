@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
-import { InputFormProps } from '../../data/objectTypes'
+import { InputFormProps } from '../data/objectTypes'
 
 const InputForm = ({label,onChange,error='',isSecure=false}: InputFormProps) => {
    const [input,setInput] = useState('')

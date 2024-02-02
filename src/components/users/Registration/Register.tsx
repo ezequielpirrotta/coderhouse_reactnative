@@ -1,6 +1,6 @@
 
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StackRegisterScreenProps, StackScreenProps } from '../../../data/navigationTypes'
 import { useCreateUserMutation, useRegisterMutation } from '../../../app/servicies'
 import SubmitButton from '../../SubmitButton'
@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 
 
 const Register = () => {
-   
+   const [registerSucces, setRegisterSuccess] = useState(false)
    const [triggerRegister, registerResult] = useRegisterMutation()
    const [triggerCreate, createResult] = useCreateUserMutation()
    const registerData = useRegisterSelector((state) => state.register)
@@ -28,9 +28,8 @@ const Register = () => {
             likes: [], 
             interests: registerData.interests,
             matches: [],
-            filter: {}
+            filter: registerData.filters
          }
-         
          triggerCreate({localId: registerResult.data.localId, data: user})
          .then((result: any)=>{
             console.log('Resultado exitoso: ',result)
@@ -63,8 +62,12 @@ const Register = () => {
    }
    return (
       <View style={styles.container}>
-         <SubmitButton title='Terminar' onPress={onSubmit}/>
-         <Text>Listo!</Text>
+         {
+            registerSucces?
+               <Text>Listo!</Text>
+               :
+               <SubmitButton title='Terminar' onPress={onSubmit}/>
+         }
       </View>
    )
 }

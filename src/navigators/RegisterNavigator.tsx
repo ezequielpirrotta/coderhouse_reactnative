@@ -14,7 +14,7 @@ import UserHome from '../components/users/Registration/UserHome'
 import Register from '../components/users/Registration/Register'
 import { Provider } from 'react-redux'
 import { registerStore } from '../app/Register/registerStore'
-import Interests from '../components/users/Registration/Interests'
+import Preferences from '../components/users/Registration/Preferences'
 import Pictures from '../components/users/Registration/Pictures'
 import Bio from '../components/users/Registration/Bio'
 
@@ -32,7 +32,7 @@ const RegisterNavigator = ({navigation}: StackScreenProps) => {
             <RootStack.Screen name='MainData'  component={MainData} options={{title:'Informacion basica'}}/>
             <RootStack.Screen name='UserHome' component={UserHome} />
             <RootStack.Screen name='GenderData' component={GenderData} />
-            <RootStack.Screen name='Interests' component={Interests} />
+            <RootStack.Screen name='Preferences' component={Preferences} />
             <RootStack.Screen name='Bio' component={Bio} />
             <RootStack.Screen name='Pictures' component={Pictures} />
             <RootStack.Screen name='Register' component={Register} />

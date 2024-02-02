@@ -47,6 +47,13 @@ export const userApi = createApi({
             method: 'PUT',
             body: data
          })
+      }),
+      postUserLocation: builder.mutation({
+         query: ({location,localId}) => ({
+            url: `locations/${localId}.json`,
+            method: 'PUT',
+            body: location
+         })
       })
    })
 })

@@ -16,7 +16,6 @@ export default Profile
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      
       border: '6px',
       borderColor: 'solid black',
       borderWidth: 3,

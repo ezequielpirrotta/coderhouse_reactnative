@@ -55,7 +55,7 @@ const ImageSelector = ({currentImages,maxImages,onAdd}: ImageSelectorType) => {
 
   const confirmImage = async() => {
     console.log('Antes de confirm',images)
-    await onAdd(images);
+    onAdd(images);
   }
 
   const removeImage = (index: number) => {
@@ -235,16 +235,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   buttonsContainer: {
-    /*flexWrap: 'wrap',
-    gap: 3,
-    
-    borderWidth: 2,
-    borderColor: 'black',
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    */
     gap: 3,
     flexWrap: 'wrap',
     flexDirection: 'row', // Change to row

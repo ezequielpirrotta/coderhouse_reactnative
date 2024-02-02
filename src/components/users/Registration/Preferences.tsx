@@ -1,14 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../../global/colors'
-import InputForm from '../InputForm'
+import InputForm from '../../InputForm'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
 import { signUpSchema } from '../../../validations/signUpSchema'
 import { useRegisterDispatch } from '../../../app/hooks'
 import { addIntersts } from '../../../features/users/registerSlice'
 
-const Interests = ({navigation}: StackRegisterScreenProps) => {
+const Preferences = ({navigation}: StackRegisterScreenProps) => {
    const [interests,setInterests] = useState([])
    const [skip, setSkip] = useState(false)
    const dispatch = useRegisterDispatch()
@@ -37,6 +37,7 @@ const Interests = ({navigation}: StackRegisterScreenProps) => {
                label='Intereses'
                onChange={setInterests}
             />
+
             <SubmitButton title='Siguiente' onPress={onSubmit}/>
             <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
          </View>
@@ -44,7 +45,7 @@ const Interests = ({navigation}: StackRegisterScreenProps) => {
    )
 }
 
-export default Interests
+export default Preferences
 
 const styles = StyleSheet.create({
    main: {

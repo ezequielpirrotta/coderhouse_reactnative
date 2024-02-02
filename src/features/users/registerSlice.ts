@@ -12,6 +12,7 @@ const initialState: RegisterState = {
    gender: '',
    pictures: [],
    bio: '',
+   filters: { ageRange: [18,60] },
    interests: []
 }
 
