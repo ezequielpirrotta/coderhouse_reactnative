@@ -17,6 +17,7 @@ import { registerStore } from '../app/Register/registerStore'
 import Preferences from '../components/users/Registration/Preferences'
 import Pictures from '../components/users/Registration/Pictures'
 import Bio from '../components/users/Registration/Bio'
+import Ranges from '../components/users/Registration/Ranges'
 
 const RootStack = createNativeStackNavigator<RootStackRegisterParamList>();
 
@@ -33,6 +34,7 @@ const RegisterNavigator = ({navigation}: StackScreenProps) => {
             <RootStack.Screen name='UserHome' component={UserHome} />
             <RootStack.Screen name='GenderData' component={GenderData} />
             <RootStack.Screen name='Preferences' component={Preferences} />
+            <RootStack.Screen name='Ranges' component={Ranges} />
             <RootStack.Screen name='Bio' component={Bio} />
             <RootStack.Screen name='Pictures' component={Pictures} />
             <RootStack.Screen name='Register' component={Register} />
@@ -43,10 +45,6 @@ const RegisterNavigator = ({navigation}: StackScreenProps) => {
    )
 }
 const styles = StyleSheet.create({
-   main: {
-      
-      
-   },
    container: {
       width: '90%',
       flexDirection: 'column',

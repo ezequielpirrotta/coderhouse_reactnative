@@ -47,8 +47,8 @@ export type Match = {
     userId: string
 }
 export type Filter = {
-   ageRange?: [number, number]
-   distanceRange?: [number,number]
+   ageRange: [number, number]
+   distanceRange: number
    commonInterests?: string[]
 }
 export type InputFormProps = {

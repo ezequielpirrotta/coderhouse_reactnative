@@ -6,7 +6,7 @@ import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
 import { addPictures } from '../../../features/users/registerSlice'
 import { useRegisterDispatch } from '../../../app/hooks'
-import ImageSelector from './ImageSelector'
+import ImageSelector from '../../ImageSelector'
 
 const Pictures = ({navigation}: StackRegisterScreenProps) => {
    const [pictures,setPictures] = useState<string[]>([])

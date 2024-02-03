@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { User, Location } from '../data/objectTypes'
 import { colors } from '../global/colors'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
-import Search from '../components/Search'
+import Search from './Search'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import * as ExpoLocation from 'expo-location'
 import { useGetUserQuery, useUpdateUserMutation } from '../app/servicies'
@@ -12,7 +12,7 @@ import MapPreview from './MapPreview'
 import { updateUser } from '../features/users/userSlice'
 import SubmitButton from './SubmitButton'
 
-const UserCard = () => {
+const Feed = () => {
    const dispatch = useAppDispatch()
    const user = useAppSelector((state) => state.user.data)
    const {localId} = useAppSelector((state) => state.auth)
@@ -68,6 +68,9 @@ const UserCard = () => {
             
          }
       })()
+      if (!user?.location?.latitude || !user?.location?.longitude){
+         setShowMap(false)
+      }
       const fetchData = async () => {
          try {
             return []
@@ -125,7 +128,7 @@ const UserCard = () => {
                            />
                         :
                         <View>
-                           <Text>No se encontraron usuarios</Text>
+                           <Text>No se encontraron usuarios cerca tuyo</Text>
                         </View>
                      :
                      <>
@@ -159,7 +162,7 @@ const UserCard = () => {
       </View>
    )
 }
-export default UserCard
+export default Feed
 
 const windowWidth = Dimensions.get('window').width
 

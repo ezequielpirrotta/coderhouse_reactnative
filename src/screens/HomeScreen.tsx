@@ -1,11 +1,11 @@
 import { StyleSheet, View } from 'react-native'
 import React from 'react'
-import UserCard from '../components/UserCard'
+import Feed from '../components/Feed'
 
 const Home = () => {
    return (
       <View style={styles.container}>
-         <UserCard/>
+         <Feed/>
       </View>
    )
 }

@@ -4,13 +4,14 @@ import { Slider } from '@miblanchard/react-native-slider';
 
 const SliderContainer = (props: {
     caption: string;
+    symbol?:string;
     children: React.ReactElement;
-    sliderValue?: Array<number>;
+    sliderValue?: Array<number> | number;
     trackMarks?: Array<number>;
     vertical?: boolean;
     onValueChange?: CallableFunction;
 }) => {
-    const {caption, sliderValue, trackMarks, onValueChange} = props;
+    const {caption, symbol, sliderValue, trackMarks, onValueChange} = props;
     const [value, setValue] = React.useState(
         sliderValue ? sliderValue : 1,
     );
@@ -28,12 +29,10 @@ const SliderContainer = (props: {
             return <View style={style} />;
         };
     }
-    const onChange = (newValue: number[]) =>{
+    const onChange = (newValue: number[] | number) =>{
         setValue(newValue);
-
-        if(onValueChange !== undefined && Array.isArray(newValue)) {
-            const filter = {ageRange:newValue}
-            onValueChange(filter)
+        if(onValueChange !== undefined) {
+            onValueChange(newValue)
         }
     }
     const renderChildren = () => {
@@ -58,7 +57,7 @@ const SliderContainer = (props: {
         <View style={styles.sliderContainer}>
             <View style={styles.titleContainer}>
                 <Text>{caption}</Text>
-                <Text>{Array.isArray(value) ? value.join(' - ') : value}</Text>
+                <Text>{Array.isArray(value) ? value.join(' - ') : value} {symbol?symbol:''}</Text>
             </View>
             {renderChildren()}
         </View>

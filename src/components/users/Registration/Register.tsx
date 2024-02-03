@@ -1,23 +1,24 @@
 
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StackRegisterScreenProps, StackScreenProps } from '../../../data/navigationTypes'
 import { useCreateUserMutation, useRegisterMutation } from '../../../app/servicies'
 import SubmitButton from '../../SubmitButton'
 import { useRegisterSelector } from '../../../app/hooks'
 import { useNavigation } from '@react-navigation/native'
+import { User } from '../../../data/objectTypes'
 
 
-const Register = () => {
+const Register = ({navigation}: StackRegisterScreenProps) => {
    const [registerSucces, setRegisterSuccess] = useState(false)
    const [triggerRegister, registerResult] = useRegisterMutation()
    const [triggerCreate, createResult] = useCreateUserMutation()
    const registerData = useRegisterSelector((state) => state.register)
-   const navigation = useNavigation<StackScreenProps['navigation']>()
+   const authNavigation = useNavigation<StackScreenProps['navigation']>()
    useEffect(()=>{
       console.log('Resultado de registro: ',registerResult)
       if(registerResult.isSuccess) {
-         const user = {
+         const user: User = {
             name: registerData.name, 
             pictures: registerData.pictures,
             age: registerData.age,
@@ -28,36 +29,39 @@ const Register = () => {
             likes: [], 
             interests: registerData.interests,
             matches: [],
-            filter: registerData.filters
+            filters: registerData.filters
          }
          triggerCreate({localId: registerResult.data.localId, data: user})
          .then((result: any)=>{
             console.log('Resultado exitoso: ',result)
-            navigation.navigate('Login')
+            authNavigation.navigate('Login')
          }).catch((error)=>{
             console.log('Error creando usuario: ',error)
          })
       }
       else {
-         if(registerResult.data?.error){
-            console.log('Error: ',registerResult.data.error.message)
+         if(registerResult.isError){
+            console.log('Error: ',registerResult.error?.data?.error)
+            console.log('Register Data: ', registerData)
+            if(!registerData.email){
+               navigation.navigate('MainData')
+            }
          }
          else {
-            console.log('Error: ',registerResult.data)
+            console.log('Error: ',registerResult)
          }
       }
       
    },[registerResult])
    const onSubmit = () => {
       try {
-         console.log('Data de registro',registerData)
          triggerRegister({
             email: registerData.email,
             password: registerData.password,
          })
       }
       catch(error: any) {
-         
+         Alert.alert("Error", error);
       }
    }
    return (

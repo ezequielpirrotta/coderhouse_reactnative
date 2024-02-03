@@ -15,10 +15,11 @@ export type RootStackRegisterParamList = {
   UserHome: undefined
   GenderData: undefined
   Preferences: undefined
+  Ranges: undefined
   Bio: undefined
   Pictures: undefined
   Register: undefined
 };
 
 export type StackRegisterScreenProps = NativeStackScreenProps<RootStackRegisterParamList, 
-  'MainData'|'UserHome'|'GenderData'|'Preferences'|'Bio'|'Pictures'|'Register'>;
+  'MainData'|'UserHome'|'GenderData'|'Preferences'|'Ranges'|'Bio'|'Pictures'|'Register'>;

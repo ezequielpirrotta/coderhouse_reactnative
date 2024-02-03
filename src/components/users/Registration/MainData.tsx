@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../../global/colors'
 import InputForm from '../../InputForm'
@@ -38,6 +38,7 @@ const MainData = ({navigation}: StackRegisterScreenProps) => {
                     age,
                     sex
                 }
+                console.log(basicInfo)
                 dispatch(setBasics(basicInfo))
                 navigation.navigate('UserHome')
             }
@@ -60,7 +61,7 @@ const MainData = ({navigation}: StackRegisterScreenProps) => {
     }
     return (
         <View style={styles.main}>
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container} automaticallyAdjustKeyboardInsets={true}>
                 <Text style={styles.title}>Informacion Basica</Text>
                 <InputForm
                     label='Nombre'
@@ -97,7 +98,7 @@ const MainData = ({navigation}: StackRegisterScreenProps) => {
                     error={errorConfirmPassword}
                 />
                 <SubmitButton title='Siguiente' onPress={onSubmit}/>
-            </View>
+            </ScrollView>
         </View>
     )
 }
@@ -106,28 +107,23 @@ export default MainData
 
 const styles = StyleSheet.create({
     main: {
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center'
+        flex: 1,
+        padding: 10,
     },
     container: {
-        width: '90%',
+        margin: 10,
+        padding: 10,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: colors.darkCream,
         gap: 15,
-        paddingVertical: 20,
+        borderWidth: 3,
         borderRadius: 10
     },
     title: {
         fontSize: 25,
         margin: 10
     },
-    subLink: {
-        color: 'blue',
-        fontSize: 14,
-        /*fontFamily: 'Josefin'*/
-    }
+    
 })

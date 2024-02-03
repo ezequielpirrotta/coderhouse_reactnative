@@ -1,10 +1,8 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../../global/colors'
-import InputForm from '../../InputForm'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
-import { signUpSchema } from '../../../validations/signUpSchema'
 import InputSelectForm from '../../InputSelectForm'
 import { useGetGendersQuery } from '../../../app/servicies'
 import { useRegisterDispatch } from '../../../app/hooks'
@@ -13,7 +11,7 @@ import { setGender } from '../../../features/users/registerSlice'
 const GenderData = ({navigation}: StackRegisterScreenProps) => {
    const [userGender,setUserGender] = useState('')
    const [skip, setSkip] = useState(false)
-   const {data,error,isLoading,isError} = useGetGendersQuery()
+   const {data,error,isLoading,isError} = useGetGendersQuery(0)
    const dispatch = useRegisterDispatch()
 
    useEffect(()=>{
@@ -22,14 +20,14 @@ const GenderData = ({navigation}: StackRegisterScreenProps) => {
          console.log("Error al conseguir los generos: ",error)
       }
       if(skip){
-         navigation.navigate('Interests')
+         navigation.navigate('Preferences')
       }
    },[error,skip])
    const onSubmit = () => {
       try {
          if(userGender != '') {
             dispatch(setGender(userGender))
-            navigation.navigate('Interests')
+            navigation.navigate('Preferences')
          }
       }
       catch(error: any) {
@@ -38,7 +36,7 @@ const GenderData = ({navigation}: StackRegisterScreenProps) => {
    }
    return (
       <View style={styles.main}>
-         <View style={styles.container}>
+         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Cual es tu Identidad Sexual?</Text>
             {
                isLoading?
@@ -55,7 +53,7 @@ const GenderData = ({navigation}: StackRegisterScreenProps) => {
             }
             <SubmitButton title='Siguiente' onPress={onSubmit}/>
             <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
-         </View>
+         </ScrollView>
       </View>
    )
 }
@@ -64,19 +62,18 @@ export default GenderData
 
 const styles = StyleSheet.create({
    main: {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center'
+      flex: 1,
+      padding: 10,
    },
    container: {
-      width: '90%',
+      margin: 10,
+      padding: 10,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: colors.darkCream,
       gap: 15,
-      paddingVertical: 20,
+      borderWidth: 3,
       borderRadius: 10
    },
    title: {

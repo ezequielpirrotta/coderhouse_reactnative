@@ -11,10 +11,11 @@ import SubmitButton from '../SubmitButton';
 import { deleteSession } from '../../database';
 import { logOut } from '../../features/users/authSlice';
 import { MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
-import ImageSelector from './Registration/ImageSelector';
+import ImageSelector from '../ImageSelector';
 import { useGetUserQuery, useUpdateUserMutation } from '../../app/servicies';
 import EditButton from './EditButton';
 import MapPreview from '../MapPreview';
+import { initialMaxAge, initialMaxDistance, maxAge, maxDistance, minAge, minDistance } from '../../global/constants';
 
 const ProfileData = () => {
    const {data:user,isLoading,error} = useAppSelector((state) => state.user)
@@ -23,7 +24,7 @@ const ProfileData = () => {
    const [itemSelected, setItemSelected] = useState('')
    const [showAlert, setShowAlert] = useState(false);
    const [didEdit, setDidEdit] = useState(false)
-   const [userFilters, setUserFilters] = useState(user?.filters || {})
+   const [userFilters, setUserFilters] = useState<Filter>(user?.filters || {ageRange:[minAge,initialMaxAge],distanceRange:initialMaxDistance})
    const [showImagePick, setShowImagePick] = useState(false)
    const dispatch = useAppDispatch()
    const [updateUserProfile] = useUpdateUserMutation();
@@ -31,7 +32,7 @@ const ProfileData = () => {
 
    useEffect(()=>{
       if(isSuccess) {
-         //console.log(user?.location)
+         console.log(user)
       }
    },[user,didEdit])
    const onAgeRangeChange = (filters: Filter | undefined) => {
@@ -139,60 +140,57 @@ const ProfileData = () => {
                      user.location?
                         <MapPreview {...user.location} />
                         :
-                        null
+                        <Text>pene</Text>
+                        
                   }
                   <View style={styles.preferences}>
                      <Text style={styles.prefsTitle}>Preferencias</Text>
                      {user.filters?.ageRange && user.filters?.ageRange.length > 0?
-                        <>
-                           <SliderContainer
-                              caption="Age"
-                              sliderValue={[user?.filters.ageRange[0],user?.filters.ageRange[1]]}
-                              onValueChange={()=>onAgeRangeChange}>
-                              <Slider
-                                 animateTransitions
-                                 maximumTrackTintColor="#d3d3d3"
-                                 maximumValue={80}
-                                 minimumTrackTintColor="#1fb28a"
-                                 minimumValue={18}
-                                 step={1}
-                                 thumbTintColor="#1a9274"
-                                 containerStyle={styles.slider}
-                              />
-                           </SliderContainer>
-                           {
-                              didEdit?
-                              <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
-                              :null
-                           }
-                        </>
+                        <SliderContainer
+                           caption="Rango de edad"
+                           symbol='Años'
+                           sliderValue={[user?.filters.ageRange[0],user?.filters.ageRange[1]]}
+                           onValueChange={onAgeRangeChange}>
+                           <Slider
+                              animateTransitions
+                              maximumTrackTintColor="#d3d3d3"
+                              maximumValue={maxAge}
+                              minimumTrackTintColor="#1fb28a"
+                              minimumValue={minAge}
+                              step={1}
+                              thumbTintColor="#1a9274"
+                              containerStyle={styles.slider}
+                           />
+                        </SliderContainer>
                         :
                         null
-                     }{user.filters?.distanceRange && user.filters?.distanceRange.length > 0?
-                        <>
-                           <SliderContainer
-                              caption="Distancia"
-                              sliderValue={[user?.filters.distanceRange[0],user?.filters.distanceRange[1]]}
-                              onValueChange={()=>onAgeRangeChange()}>
-                              <Slider
-                                 animateTransitions
-                                 maximumTrackTintColor="#d3d3d3"
-                                 maximumValue={80}
-                                 minimumTrackTintColor="#1fb28a"
-                                 minimumValue={18}
-                                 step={1}
-                                 thumbTintColor="#1a9274"
-                                 containerStyle={styles.slider}
-                              />
-                           </SliderContainer>
-                           {
-                              didEdit?
-                              <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
-                              :null
-                           }
-                        </>
+                     }{user.filters?.distanceRange ?
+                        <SliderContainer
+                           caption="Distancia"
+                           sliderValue={user?.filters.distanceRange}
+                           symbol='Km'
+                           onValueChange={()=>onAgeRangeChange}>
+                           <Slider
+                              animateTransitions
+                              maximumTrackTintColor="#d3d3d3"
+                              maximumValue={maxDistance}
+                              minimumTrackTintColor="#1fb28a"
+                              minimumValue={minDistance}
+                              step={1}
+                              thumbTintColor="#1a9274"
+                              containerStyle={styles.slider}
+                           />
+                        </SliderContainer>
                         :
                         null
+                     }
+                     {
+                        didEdit?
+                           <>
+                              <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
+                              <Button title='Restablecer' onPress={()=>setShowAlert(true)}></Button>
+                           </>
+                           :null
                      }
                      <AwesomeAlert
                         show={showAlert}
@@ -355,20 +353,3 @@ const styles = StyleSheet.create({
       gap: 4
    }
 })
-
-/**
- * <FlatList 
-      data={getUserMatched()}
-      keyExtractor={item => item.id}
-      renderItem={ ({item}) =>
-         <View style={styles.task}>
-         <BouncyCheckbox  onPress={() => {} } />
-         <Text style={styles.taskText}>{item.name}, {item.age} años</Text>
-               <Text>{item.location}</Text>
-               <View style={styles.buttons}>
-               
-               </View>
-         </View>  
-      }
-   />
- */

@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { RegisterBasics, RegisterState, User } from '../../data/objectTypes'
+import { Filter, RegisterBasics, RegisterState, User } from '../../data/objectTypes'
+import { minAge,initialMaxAge, minDistance, initialMaxDistance } from '../../global/constants'
 
 const initialState: RegisterState = {
    name: '',
@@ -12,7 +13,7 @@ const initialState: RegisterState = {
    gender: '',
    pictures: [],
    bio: '',
-   filters: { ageRange: [18,60] },
+   filters: { ageRange: [minAge,initialMaxAge], distanceRange: initialMaxDistance },
    interests: []
 }
 
@@ -33,6 +34,9 @@ export const registerSlice = createSlice({
       setGender: (state: RegisterState, action: PayloadAction<string>) => {
          state.gender = action.payload
       },
+      setFilters: (state: RegisterState, action: PayloadAction<Filter>) => {
+         state.filters = action.payload
+      },
       addBio: (state: RegisterState, action: PayloadAction<string>) => {
          state.bio = action.payload
       },
@@ -45,6 +49,6 @@ export const registerSlice = createSlice({
    },
 })
 
-export const { setBasics,setHome,setGender, addBio, addIntersts, addPictures } = registerSlice.actions
+export const { setBasics,setHome,setGender, addBio, addIntersts, addPictures, setFilters} = registerSlice.actions
 
 export default registerSlice.reducer

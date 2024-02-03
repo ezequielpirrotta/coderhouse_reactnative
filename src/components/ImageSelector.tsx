@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react"
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { colors } from "../../../global/colors"
-import SubmitButton from "../../SubmitButton"
+import { colors } from "../global/colors"
+import SubmitButton from "./SubmitButton"
 import * as ImagePicker from 'expo-image-picker'
-import { ImageSelectorType } from "../../../data/objectTypes"
+import { ImageSelectorType } from "../data/objectTypes"
 
 const ImageSelector = ({currentImages,maxImages,onAdd}: ImageSelectorType) => {
   
@@ -16,6 +16,7 @@ const ImageSelector = ({currentImages,maxImages,onAdd}: ImageSelectorType) => {
   },[images])
   const verifyCameraPermissions = async () => {
     const granted = await ImagePicker.requestCameraPermissionsAsync();
+    
     if (!granted) {
       return false;
     }
@@ -84,15 +85,6 @@ const ImageSelector = ({currentImages,maxImages,onAdd}: ImageSelectorType) => {
             )}
           />
         </>
-        /*{images.map((image, index) => (
-            <View  key={index} style={styles.imageContainer}>
-              <Image source={{ uri: image }} style={styles.selectedImage} />
-              <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
-                <Text style={styles.removeButtonText}>X</Text>
-              </TouchableOpacity>
-            </View>
-        ))}*/
-        
         :null
       }
       <View style={styles.container}>

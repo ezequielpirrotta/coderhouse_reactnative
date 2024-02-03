@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../../global/colors'
 import InputForm from '../../InputForm'
@@ -30,7 +30,7 @@ const UserHome = ({navigation}: StackRegisterScreenProps) => {
    }
    return (
       <View style={styles.main}>
-         <View style={styles.container}>
+         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>De donde Eres?</Text>
             <InputForm
                label='Cuidad'
@@ -40,7 +40,7 @@ const UserHome = ({navigation}: StackRegisterScreenProps) => {
             <SubmitButton title='Siguiente' onPress={onSubmit}/>
             <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
 
-         </View>
+         </ScrollView>
       </View>
    )
 }
@@ -49,19 +49,19 @@ export default UserHome
 
 const styles = StyleSheet.create({
    main: {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center'
+      flex: 1,
+      padding: 10,
+      justifyContent: 'center'
    },
    container: {
-      width: '90%',
+      margin: 10,
+      padding: 10,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: colors.darkCream,
       gap: 15,
-      paddingVertical: 20,
+      borderWidth: 3,
       borderRadius: 10
    },
    title: {

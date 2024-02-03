@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react"
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { colors } from "../../../global/colors"
-import SubmitButton from "../../SubmitButton"
-import { ImageSelectorType } from "../../../data/objectTypes"
+import { colors } from "../global/colors"
+import SubmitButton from "./SubmitButton"
+import { ImageSelectorType } from "../data/objectTypes"
 
 
 const ImageDisplay = ({currentImages,maxImages}: ImageSelectorType) => {

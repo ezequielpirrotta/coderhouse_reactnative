@@ -1,13 +1,12 @@
+import { ActivityIndicator, StyleSheet } from 'react-native';
+import Header from '../components/Header';
 import Home from '../screens/HomeScreen';
 import Profile from '../screens/ProfileScreen';
-import Header from '../components/Header';
-import FooterTabBar from '../components/FooterTabBar';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ChatScreen from '../screens/ChatScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useAppSelector } from '../app/hooks';
 import { useGetUserQuery } from '../app/servicies';
-import { ActivityIndicator, StyleSheet } from 'react-native';
-import { Entypo, Ionicons } from '@expo/vector-icons';
 import { colors } from '../global/colors'
 
 const Tab = createBottomTabNavigator();
@@ -24,8 +23,7 @@ const TabNavigator = () => {
             tabBarShowLabel: true,
             tabBarStyle: styles.container ,
             tabBarLabelStyle: styles.tabLabel
-         }}
-            /*tabBar={(props)=>{return <FooterTabBar {...props}/>}}*/>
+         }}>
             <Tab.Screen name='home' component={Home} options={
                ()=>{
                   return {
@@ -73,7 +71,6 @@ export default TabNavigator;
 
 const styles = StyleSheet.create({
    container: {
-      
       flexDirection: 'row',
       backgroundColor: colors.darkCream,
       height: '10%',
@@ -82,12 +79,9 @@ const styles = StyleSheet.create({
       marginTop: 10,
       padding: 10,
       justifyContent: 'space-evenly',
-      
       shadowColor: 'black',
-      
    },
    buttons: {
-      
       flexDirection: 'row',
       justifyContent: 'space-evenly'
    },
