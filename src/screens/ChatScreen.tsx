@@ -1,80 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Button } from 'react-native';
-import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import io, { Socket } from 'socket.io-client';
+import React from 'react';
+import { View, StyleSheet, FlatList, Text, Image, Dimensions } from 'react-native';
+import { useAppSelector } from '../app/hooks';
+import UserMatch from '../components/users/UserMatch';
+import UserLike from '../components/users/UserLike';
 
 const ChatScreen = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const socket: Socket = io('http://tu-servidor-websockets');
-
-  useEffect(() => {
-    // Conéctate al servidor de WebSockets al montar el componente
-    socket.connect();
-
-    // Maneja los mensajes recibidos
-    socket.on('message', (message: IMessage) => {
-      setMessages((prevMessages) => GiftedChat.append(prevMessages, [message]));
-    });
-
-    // Desconéctate del servidor cuando el componente se desmonta
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  const onSend = (newMessages: IMessage[] = []) => {
-    if (newMessages.length === 0) {
-      return;
-    }
-
-    const { _id, createdAt, text, user } = newMessages[0];
-
-    const newMessage: IMessage = {
-      _id: _id || messages.length + 1,
-      text,
-      createdAt: createdAt || new Date(),
-      user: user || {
-        _id: 1,
-        name: 'Usuario', // Puedes personalizar el nombre del usuario
-      },
-    };
-
-    // Envía el mensaje al servidor a través de WebSockets
-    socket.emit('message', newMessage);
-
-    // Actualiza el estado local con el nuevo mensaje
-    setMessages((prevMessages) => GiftedChat.append(prevMessages, [newMessage]));
-
-    // Limpia el cuadro de entrada
-    setInputMessage('');
-  };
+  const {data: user, isLoading} = useAppSelector((state) => state.user)
 
   return (
     <View style={styles.container}>
-      <GiftedChat
-        messages={messages}
-        onSend={(newMessages) => onSend(newMessages)}
-        user={{
-          _id: 1,
-        }}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={inputMessage}
-          onChangeText={(text) => setInputMessage(text)}
-          placeholder="Escribe un mensaje..."
-        />
-      </View>
+      {
+        user?
+        <View style={styles.likeContainer}>
+          <Text>Usuarios que te gustaron</Text>
+          {
+            user.likes?
+              <FlatList
+                data={user.likes}
+                keyExtractor={(item,index) => index.toString()}
+                renderItem={ ({item}) =>
+                  <UserLike localId={item}/>
+                }
+              />
+              :<Text>No tienes usuarios que te gusten aún</Text>
+
+          }
+        </View>
+          
+        :null
+      }
     </View>
   );
 };
-'<Button title="Enviar" onPress={() => onSend(inputMessage)} />'
+const windowWidth = Dimensions.get('window').width
+const windowHeight = Dimensions.get('window').height
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    padding: 10,
+  },
+  likeContainer: {
+    
+    width: '100%',   
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 6
   },
   inputContainer: {
     flexDirection: 'row',

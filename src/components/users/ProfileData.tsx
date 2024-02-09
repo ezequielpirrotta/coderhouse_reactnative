@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, Button, FlatList,Modal, Dimensions, Image, ActivityIndicator, Pressable, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Image, ActivityIndicator, Pressable, ScrollView, TextInput } from 'react-native';
 import { colors } from '../../global/colors'
-import { Filter, Location, User } from '../../data/objectTypes';
+import { Filter, Location,UserData } from '../../data/objectTypes';
 import { Slider } from '@miblanchard/react-native-slider';
 import SliderContainer from '../SliderContainer';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -16,6 +16,8 @@ import { useGetUserQuery, useUpdateUserMutation } from '../../app/servicies';
 import EditButton from './EditButton';
 import MapPreview from '../MapPreview';
 import { initialMaxAge, initialMaxDistance, maxAge, maxDistance, minAge, minDistance } from '../../global/constants';
+import BioInput from './BioInput';
+import Search from '../Search';
 
 const ProfileData = () => {
    const {data:user,isLoading,error} = useAppSelector((state) => state.user)
@@ -25,26 +27,21 @@ const ProfileData = () => {
    const [showAlert, setShowAlert] = useState(false);
    const [didEdit, setDidEdit] = useState(false)
    const [bioDidEdit, setBioDidEdit] = useState(false)
-   const [userFilters, setUserFilters] = useState(user?.filters? {...user?.filters} : {ageRange:[minAge,initialMaxAge],distanceRange:initialMaxDistance})
+   const [userFilters, setUserFilters] = useState<Filter>(user?.filters? {...user?.filters} : {ageRange:[minAge,initialMaxAge],distanceRange:initialMaxDistance})
    const [showImagePick, setShowImagePick] = useState(false)
    const dispatch = useAppDispatch()
    const [updateUserProfile] = useUpdateUserMutation();
 
-   useEffect(()=>{
-      console.log('Filtros: ', userFilters)
-   },[userFilters])
+   
    const onAgeRangeChange = (ageRange: [number,number]) => {
       setDidEdit(true)
       let newFilter = {...userFilters}
       if(ageRange) {
          newFilter.ageRange = ageRange;
       }
-      console.log(newFilter)
-
       setUserFilters(newFilter)
    }
    const onDistanceRangeChange = (distanceRange: number) => {
-      //console.log(distanceRange)
       setDidEdit(true)
       let newFilter = userFilters
       if(distanceRange) {
@@ -55,9 +52,7 @@ const ProfileData = () => {
    const onEditProfileLocation = async (location: Location) => {
       if(user) {
          let newUser = {...user}
-         console.log('Location',location)
          newUser.location = location 
-         console.log('Nuevo usuario',newUser)
          try {
 
             const updateResult = await updateUserProfile({localId, data: newUser})
@@ -65,7 +60,6 @@ const ProfileData = () => {
                dispatch(updateUser(updateResult.data))
                
             }
-            console.log('Resultado exitoso: ',updateResult)
          }
          
          catch(error:any) {
@@ -84,7 +78,6 @@ const ProfileData = () => {
                dispatch(updateUser(updateResult.data))
                setShowImagePick(!showImagePick)
             }
-            console.log('Resultado exitoso: ',updateResult)
          }
          
          catch(error:any) {
@@ -93,12 +86,14 @@ const ProfileData = () => {
       }
    }
    const onEdit = () => {
-      let newData: User | null = user
-      if(newData){
-         newData.filters=userFilters
-         dispatch(updateUser(newData))
-         updateUserProfile({localId,data: newData})
-         setDidEdit(false)
+      if(user){
+         let newData:UserData  = {...user}
+         if(newData){
+            newData.filters=userFilters
+            dispatch(updateUser(newData))
+            updateUserProfile({localId,data: newData})
+            setDidEdit(false)
+         }
       }
    }
    const onSave = () => {
@@ -141,30 +136,28 @@ const ProfileData = () => {
                         </View>
                      </View>
                      <Text style={styles.name}>{user.name}, {user.age}</Text>
+
+                     {/** Biografy section */}
+                     <BioInput {...user} ></BioInput>
                      
-                     <TextInput  style={styles.bioContainer}>
-                        <Text numberOfLines={5} ellipsizeMode={'head'}>
-                           <Text  style={styles.bio}>
-                              {user.bio?user.bio:"Sin biografía"}
-                           </Text>
-                        </Text>
-                     </TextInput>
                      {
                         bioDidEdit?
                            <SubmitButton title='Guardar' onPress={()=>{setShowImagePick(true)}}/> : null
                      }
                      
                   </View>
+                  {/** Map section */}
                   {
                      user.location?
                         <>
                            <Text style={styles.title}>Tu ubicacion</Text>
+                           <Text>{user.location.address}</Text>
                            <MapPreview {...user.location} />
                         </>
                         :
-                        <Text>No tienes tu ubicación guardada</Text>
-
-                        
+                        <>
+                           <Text>No tienes tu ubicación guardada</Text>
+                        </>
                   }
                   <View style={styles.preferences}>
                      <Text style={styles.title}>Preferencias</Text>
@@ -172,8 +165,8 @@ const ProfileData = () => {
                         <SliderContainer
                            caption="Rango de edad"
                            symbol='Años'
-                           sliderValue={[userFilters.ageRange[0],userFilters.ageRange[1]]}
-                           onValueChange={(ageRange: [number,number])=>{onAgeRangeChange(ageRange)}}>
+                           sliderValue={userFilters.ageRange}
+                           onValueChange={onAgeRangeChange}>
                            <Slider
                               animateTransitions
                               maximumTrackTintColor="#d3d3d3"
@@ -192,7 +185,7 @@ const ProfileData = () => {
                            caption="Distancia"
                            sliderValue={userFilters.distanceRange}
                            symbol='Km'
-                           onValueChange={(distanceRange: number)=>{onDistanceRangeChange(distanceRange)}}>
+                           onValueChange={onDistanceRangeChange}>
                            <Slider
                               animateTransitions
                               maximumTrackTintColor="#d3d3d3"
@@ -211,7 +204,7 @@ const ProfileData = () => {
                         didEdit?
                            <View  style={styles.buttons}>
                               <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
-                              <Button title='Restablecer' onPress={()=>{setUserFilters({...user?.filters});  }}></Button>
+                              <Button title='Restablecer' onPress={()=>{setUserFilters({...user?.filters});  setDidEdit(false)}}></Button>
                            </View>
                            :null
                      }

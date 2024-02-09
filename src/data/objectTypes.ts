@@ -1,10 +1,11 @@
-export type User = {
+export type UserData = {
    name: string
    pictures: string[]
    age: number
    home: string
    gender?: string
    sex: string
+   birthDate?: Date
    bio: string
    likes: string[]
    interests: string[]
@@ -12,9 +13,13 @@ export type User = {
    filters: Filter
    location?:  Location
 }
+export type User = {
+   id: string
+   data:UserData
+}
 export type UserState = {
    isLoading: boolean
-   data: User|null
+   data:UserData|null
    error: object | null | undefined
 }
 export type RegisterState = {
@@ -22,6 +27,7 @@ export type RegisterState = {
    email: string,
    password: string,
    age: number,
+   birthDate: string,
    sex: string,
    gender: string,
    home: string
@@ -33,7 +39,7 @@ export type RegisterState = {
 export type Location = {
    latitude: string,
    longitude: string,
-   adress?: string
+   address?: string
 }
 export type RegisterBasics = {
    name: string,

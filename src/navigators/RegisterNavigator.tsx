@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { StackScreenProps } from '../data/navigationTypes'
 import { colors } from '../global/colors'
 import { useCreateUserMutation, useGetUserQuery, useRegisterMutation } from '../app/servicies'
-import { User } from '../data/objectTypes'
+import {UserData } from '../data/objectTypes'
 import { signUpSchema } from '../validations/signUpSchema'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Header from '../components/Header'

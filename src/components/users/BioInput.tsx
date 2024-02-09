@@ -1,13 +1,14 @@
 import { Dimensions, StyleSheet, Text, TextInput } from 'react-native'
 import React, {useState} from 'react'
 import { colors } from '../../global/colors'
+import {UserData } from '../../data/objectTypes'
 
-const BioInput = (bio: string) => {
+const BioInput = ({bio}:UserData) => {
    const [localBio, setBio] = useState(bio?bio:"Sin biografía")
    return (
-      <TextInput  style={styles.container}>
+      <TextInput style={styles.container} onChangeText={(value)=>setBio(value)}>
          <Text numberOfLines={5} ellipsizeMode={'head'}>
-            <Text  style={styles.bio}>
+            <Text style={styles.bio}>
                {localBio}
             </Text>
          </Text>

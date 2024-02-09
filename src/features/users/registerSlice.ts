@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { Filter, RegisterBasics, RegisterState, User } from '../../data/objectTypes'
-import { minAge,initialMaxAge, minDistance, initialMaxDistance } from '../../global/constants'
+import { Filter, RegisterBasics, RegisterState,UserData } from '../../data/objectTypes'
+import { minAge,initialMaxAge, initialMaxDistance } from '../../global/constants'
 
 const initialState: RegisterState = {
    name: '',

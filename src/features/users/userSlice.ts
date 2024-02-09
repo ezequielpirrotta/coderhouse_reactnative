@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { User, UserState } from '../../data/objectTypes'
+import {UserData, UserState } from '../../data/objectTypes'
 
 const initialState: UserState = {
    isLoading: true,
@@ -17,9 +17,8 @@ export const userSlice = createSlice({
          state.isLoading = action.payload.isLoading
          state.error = action.payload.error
       },
-      updateUser: (state: UserState, action: PayloadAction<User>) => {
-         let updatedUser: User = action.payload
-         state.data = updatedUser
+      updateUser: (state: UserState, action: PayloadAction<UserData>) => {
+         state.data = action.payload
       }
    },
 })

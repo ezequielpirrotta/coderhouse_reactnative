@@ -1,21 +1,24 @@
+import React, {Children, ReactElement, cloneElement, useEffect, useState} from 'react'
 import { StyleSheet, Text, View} from 'react-native'; 
-import * as React from 'react'
 import { Slider } from '@miblanchard/react-native-slider';
 
 const SliderContainer = (props: {
     caption: string;
     symbol?:string;
-    children: React.ReactElement;
+    children: ReactElement;
     sliderValue?: Array<number> | number;
     trackMarks?: Array<number>;
     vertical?: boolean;
     onValueChange?: CallableFunction;
 }) => {
     const {caption, symbol, sliderValue, trackMarks, onValueChange} = props;
-    const [value, setValue] = React.useState(
+    const [value, setValue] = useState(
         sliderValue ? sliderValue : 1,
     );
-    let renderTrackMarkComponent: (index: number) => React.ReactElement | null;
+    useEffect(()=>{
+        setValue(sliderValue ? sliderValue : 1)
+    },[sliderValue])
+    let renderTrackMarkComponent: (index: number) => ReactElement | null;
 
     if (trackMarks?.length && (!Array.isArray(value) || value?.length === 1)) {
         renderTrackMarkComponent = (index: number) => {
@@ -29,6 +32,7 @@ const SliderContainer = (props: {
             return <View style={style} />;
         };
     }
+
     const onChange = (newValue: number[] | number) =>{
         setValue(newValue);
         if(onValueChange !== undefined) {
@@ -36,11 +40,11 @@ const SliderContainer = (props: {
         }
     }
     const renderChildren = () => {
-        return React.Children.map(
+        return Children.map(
             props.children,
-            (child: React.ReactElement) => {
+            (child: ReactElement) => {
                 if (!!child && child.type === Slider) {
-                    return React.cloneElement(child, {
+                    return cloneElement(child, {
                         onValueChange: onChange,
                         renderTrackMarkComponent,
                         trackMarks,
@@ -52,7 +56,7 @@ const SliderContainer = (props: {
             },
         );
     };
-
+    
     return (
         <View style={styles.sliderContainer}>
             <View style={styles.titleContainer}>

@@ -55,7 +55,6 @@ const ImageSelector = ({currentImages,maxImages,onAdd}: ImageSelectorType) => {
   }, [cameraPicker, images]);
 
   const confirmImage = async() => {
-    console.log('Antes de confirm',images)
     onAdd(images);
   }
 

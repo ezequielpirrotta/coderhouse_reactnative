@@ -11,11 +11,10 @@ import { setGender } from '../../../features/users/registerSlice'
 const GenderData = ({navigation}: StackRegisterScreenProps) => {
    const [userGender,setUserGender] = useState('')
    const [skip, setSkip] = useState(false)
-   const {data,error,isLoading,isError} = useGetGendersQuery(0)
+   const {data,error,isLoading,isError} = useGetGendersQuery()
    const dispatch = useRegisterDispatch()
 
    useEffect(()=>{
-      console.log(data)
       if(isError){
          console.log("Error al conseguir los generos: ",error)
       }
@@ -48,7 +47,7 @@ const GenderData = ({navigation}: StackRegisterScreenProps) => {
                <InputSelectForm
                   label='Genero'
                   onChange={setUserGender}
-                  options={data.genders}
+                  options={data?.genders?data?.genders:[]}
                />
             }
             <SubmitButton title='Siguiente' onPress={onSubmit}/>

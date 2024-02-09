@@ -6,7 +6,7 @@ import { useCreateUserMutation, useRegisterMutation } from '../../../app/servici
 import SubmitButton from '../../SubmitButton'
 import { useRegisterSelector } from '../../../app/hooks'
 import { useNavigation } from '@react-navigation/native'
-import { User } from '../../../data/objectTypes'
+import {UserData } from '../../../data/objectTypes'
 
 
 const Register = ({navigation}: StackRegisterScreenProps) => {
@@ -16,9 +16,8 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
    const registerData = useRegisterSelector((state) => state.register)
    const authNavigation = useNavigation<StackScreenProps['navigation']>()
    useEffect(()=>{
-      console.log('Resultado de registro: ',registerResult)
       if(registerResult.isSuccess) {
-         const user: User = {
+         const user: UserData = {
             name: registerData.name, 
             pictures: registerData.pictures,
             age: registerData.age,
@@ -33,7 +32,6 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
          }
          triggerCreate({localId: registerResult.data.localId, data: user})
          .then((result: any)=>{
-            console.log('Resultado exitoso: ',result)
             authNavigation.navigate('Login')
          }).catch((error)=>{
             console.log('Error creando usuario: ',error)
@@ -42,7 +40,6 @@ const Register = ({navigation}: StackRegisterScreenProps) => {
       else {
          if(registerResult.isError){
             console.log('Error: ',registerResult.error?.data?.error)
-            console.log('Register Data: ', registerData)
             if(!registerData.email){
                navigation.navigate('MainData')
             }

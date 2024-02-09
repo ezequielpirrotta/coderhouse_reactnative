@@ -25,11 +25,9 @@ const Login = ({navigation}: StackScreenProps) => {
    useEffect(()=>{
       try {
          if (isSuccess && !isLoading){
-            console.log("Data sesion:",data)
             if(data){
                insertSession({localId: data.localId, email:data.email, token: data.idToken})
                   .then((result)=>{
-                     console.log('Sesion guardada:',result)
                      dispatch(setUser({email:data.email, token: data.idToken, localId: data.localId}))
                   })
                   .catch(error => console.log('Error guardando sesión:',error))
@@ -41,7 +39,6 @@ const Login = ({navigation}: StackScreenProps) => {
          }
       }
       catch(error: any) {
-         console.log('Error:',error)
          setTextError(error)
          setShowAlert(true)
       }
@@ -52,8 +49,7 @@ const Login = ({navigation}: StackScreenProps) => {
       try{
          signInSchema.validateSync({email: username,password})
          triggerLogin({email: username,password})
-         .then((result)=>{
-            console.log(result)
+         .then(()=>{
             setUsername('')
             setPassword('')
          })

@@ -1,7 +1,5 @@
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { colors } from '../../../global/colors'
-import InputForm from '../../InputForm'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
 import { addPictures } from '../../../features/users/registerSlice'

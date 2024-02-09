@@ -38,14 +38,11 @@ const MainData = ({navigation}: StackRegisterScreenProps) => {
                     age,
                     sex
                 }
-                console.log(basicInfo)
                 dispatch(setBasics(basicInfo))
                 navigation.navigate('UserHome')
             }
         }
         catch(error: any) {
-            console.log('Error:')
-            console.log(error.path)
             switch (error.path) {
                 case 'email':
                 setErrorEmail(error.message)

@@ -1,41 +1,72 @@
-import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Dimensions, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { User, Location } from '../data/objectTypes'
 import { colors } from '../global/colors'
-import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import Search from './Search'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import * as ExpoLocation from 'expo-location'
-import { useGetUserQuery, useUpdateUserMutation } from '../app/servicies'
+import LoaderKit from 'react-native-loader-kit'
+import { useGetUsersQuery, useUpdateUserMutation } from '../app/servicies'
 import AwesomeAlert from 'react-native-awesome-alerts'
 import MapPreview from './MapPreview'
 import { updateUser } from '../features/users/userSlice'
 import SubmitButton from './SubmitButton'
+import HaversineGeolocation from 'haversine-geolocation'
+import UserCard from './users/UserCard'
 
 const Feed = () => {
    const dispatch = useAppDispatch()
    const user = useAppSelector((state) => state.user.data)
    const {localId} = useAppSelector((state) => state.auth)
-   const [location, setLocation] = useState<Location>({latitude:'',longitude:''})
+   const [location, setLocation] = useState<Location>({latitude:'',longitude:'',address:''})
    const [updateUserProfile, result] = useUpdateUserMutation()
-   const {data,isSuccess} = useGetUserQuery(localId)
+   const {data: users,isSuccess} = useGetUsersQuery()
    const [error,setError] = useState('')
    const [showAlert, setShowAlert] = useState(false);
-   const [showMap, setShowMap] = useState(user?.location?.latitude? false : true)
+   const [showMap, setShowMap] = useState(user?.location? false : true)
    const [userLiked, setUserLiked] = useState('')
+   const [userPassed, setUserPassed] = useState('')
    const [keyword,setKeyword] = useState('')
-   const [users,setUsers] = useState<User[]>([])
    const [filteredUsers, setFilteredUsers] = useState<User[]>([])
    const [isLoading, setIsLoading] = useState(true)
 
-   const onLike = (id: string) => {
+   const onLike = async (id: string) => {
       setUserLiked(id);
+      if (userLiked) {
+         let updatedUser = {...user}
+         try {
+            if(updatedUser?.likes) {
+               const hasLikes = updatedUser?.likes.length > 0
+               if(hasLikes) {
+                  updatedUser.likes.push(userLiked)
+               }
+               else {
+                  updatedUser.likes = [userLiked]
+               }
+            }
+            else {
+               updatedUser.likes = [userLiked]
+            }
+            const updateResult = await updateUserProfile({localId, data: updatedUser})
+            if('data' in updateResult){
+               dispatch(updateUser(updateResult.data))
+               setUserLiked('')
+            }
+         }
+         
+         catch(error:any) {
+            console.log('Error likeando usuario: ',error)
+         }
+         
+      }
+   }
+   const onPass = (id: string) => {
+      setUserPassed(id);
    }
    const onEditProfileLocation = async () => {
       if(user) {
          let newUser = {...user}
          newUser.location = location 
-         console.log('Nuevo usuario',newUser)
          try {
 
             const updateResult = await updateUserProfile({localId, data: newUser})
@@ -43,7 +74,6 @@ const Feed = () => {
                dispatch(updateUser(updateResult.data))
                setShowMap(!showMap)
             }
-            console.log('Resultado exitoso: ',updateResult)
          }
          
          catch(error:any) {
@@ -51,9 +81,16 @@ const Feed = () => {
          }
       }
    }
+   const isInRange = (point1: Location, point2: Location) => {
+      if(user) {
+         const diff = HaversineGeolocation.getDistanceBetween(point1, point2)
+         return diff <= user.filters.distanceRange
+      }
+      return false
+   } 
    useEffect(()=>{
       (async ()=> {
-         if (!user?.location?.latitude || !user?.location?.longitude){
+         if (!(user?.location?.latitude) || !(user?.location?.longitude)){
             let {status} = await ExpoLocation.requestForegroundPermissionsAsync();
             if(status !== 'granted') {
                setError('Permisos de ubicación denegados')
@@ -61,44 +98,41 @@ const Feed = () => {
                return
             }
             let fetchedLocation = await ExpoLocation.getCurrentPositionAsync({})
+            const latitude = fetchedLocation.coords.latitude
+            const longitude = fetchedLocation.coords.longitude
+            const address = (await ExpoLocation.reverseGeocodeAsync({latitude,longitude}))[0]
             setLocation({
-               latitude: (fetchedLocation.coords.latitude).toString(),
-               longitude: (fetchedLocation.coords.longitude).toString()
+               latitude: latitude.toString(),
+               longitude: longitude.toString(),
+               address: address.city+', '+address.country
             })
             
          }
       })()
-      if (!user?.location?.latitude || !user?.location?.longitude){
+      if (user?.location?.latitude || user?.location?.longitude){
          setShowMap(false)
       }
-      const fetchData = async () => {
-         try {
-            return []
-         }
-         catch(error) {
-            throw error;
-         }
-      };
-      fetchData()
-      .then(async (newUsers) => {
-         setUsers(newUsers);
-         setIsLoading(false);
-      })
-      .catch((error: Error) => {
-         // Handle error appropriately, e.g., show an alert  
-         setError(`Error, Failed to fetch user data, ${error.message}`)
-         setShowAlert(true)
-      });
    },[user])
    useEffect(()=> {
-      if(user){
-         const usersLocation = users.filter(usr => user?usr.home === user.home:false)
-         const filtered = usersLocation.filter(user => user.name.includes(keyword))
+      if(user && isSuccess){
+         let usersLocation = users? users.filter((u)=> u.id != localId) : []
+         if(usersLocation){
+            usersLocation = usersLocation.filter(current=>{
+               let isInLikes = false
+               if(user.likes?.length > 0){
+                  const result = user.likes.find(currentLike=>currentLike === current.id)
+                  isInLikes = result !== undefined   
+               }
+               return !isInLikes
+            })
+            usersLocation = usersLocation.filter(current=> current?.data.location && user?.location ? isInRange(current?.data.location, user?.location):false)
+         }
+         const filtered = usersLocation.filter(user => user.data.name.includes(keyword))
          setFilteredUsers(keyword!=''?filtered:usersLocation)
          setIsLoading(false);
       }
       
-   },[keyword])
+   },[users,keyword])
    
    return (
       <View style={styles.container}>
@@ -113,17 +147,9 @@ const Feed = () => {
                         filteredUsers.length>0?
                            <FlatList 
                               data={filteredUsers.length>0?filteredUsers:users}
-                              keyExtractor={(item,index) => index.toString()}
-                              renderItem={ ({item,index}) =>
-                                 <View style={styles.user}>
-                                    
-                                    <Image source={{uri: user?.pictures[0]}} style={styles.image}/>
-                                    <Text style={styles.userText}>{item.name}, {item.age} años</Text>
-                                    <Text>{item.home}</Text>
-                                    <View style={styles.buttons}>
-                                       <BouncyCheckbox  onPress={() => {onLike(index.toString())}}/>
-                                    </View>
-                                 </View>  
+                              keyExtractor={(item) => item.id}
+                              renderItem={ ({item}) =>
+                                 <UserCard user={item} onLike={onLike} onPass={onPass}/>
                               }
                            />
                         :
@@ -132,6 +158,12 @@ const Feed = () => {
                         </View>
                      :
                      <>
+                        <LoaderKit
+                           style={{ width: 50, height: 50 }}
+                           name={'LineScale'} // Optional: see list of animations below
+                           size={50} // Required on iOS
+                           color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                        />
                         <ActivityIndicator size={'large'}></ActivityIndicator>
                         <Text>Cargando usuarios...</Text>
                      </>
@@ -164,7 +196,6 @@ const Feed = () => {
 }
 export default Feed
 
-const windowWidth = Dimensions.get('window').width
 
 const styles = StyleSheet.create({
    container: {
@@ -194,30 +225,5 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       gap: 6,
     },
-    user: {
-      flex: 1,
-      gap: 3,
-      border: '3px',
-      borderWidth: 3,
-      borderColor: colors.salmon,
-      width: windowWidth-30,
-      margin: 10,
-      padding: 30,
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    image:{
-      minWidth: 90,
-      minHeight: 90,
-      resizeMode: 'contain',
-      borderRadius: 50
-    },
-    userText: {
-      margin: 5,
-      width: '60%',	
-    },
-    buttons: {
-      padding: 10,
-    },
+    
 })

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native'
 import SubmitButton from '../../SubmitButton'
 import { StackRegisterScreenProps } from '../../../data/navigationTypes'
 import { useRegisterDispatch, useRegisterSelector } from '../../../app/hooks'
@@ -7,19 +7,20 @@ import { setFilters } from '../../../features/users/registerSlice'
 import SliderContainer from '../../SliderContainer'
 import { Slider } from '@miblanchard/react-native-slider'
 import { colors } from '../../../global/colors'
-import { initialMaxDistance, maxAge, maxDistance, minAge, minDistance } from '../../../global/constants'
+import { initialMaxAge, initialMaxDistance, maxAge, maxDistance, minAge, minDistance } from '../../../global/constants'
 
 const Ranges = ({navigation}: StackRegisterScreenProps) => {
    const filters = useRegisterSelector(state=>state.register.filters)
-   const [ageRange,setAgeRange] = useState<[number,number]>(filters.ageRange?filters.ageRange:[18,60])
+   const [ageRange,setAgeRange] = useState<[number,number]>(filters.ageRange?filters.ageRange:[minAge,initialMaxAge])
    const [distanceRange,setDistanceRange] = useState<number>(filters.distanceRange?filters.distanceRange:initialMaxDistance)
+   const [didEdit, setDidEdit] = useState(false)
    const [skip, setSkip] = useState(false)
    const dispatch = useRegisterDispatch()
    useEffect(()=>{
       if(skip){
          navigation.navigate('Bio')
       }
-   },[skip])
+   },[skip,ageRange,distanceRange])
    const onSubmit = () => {
       try {
          let newFilters = {...filters}
@@ -33,10 +34,16 @@ const Ranges = ({navigation}: StackRegisterScreenProps) => {
       }
    }
    const onAgeRangeChange = (range: [number,number]) => {
+      setDidEdit(true)
       setAgeRange(range)
    }
    const onDistanceRangeChange = (range: number) => {
+      setDidEdit(true)
       setDistanceRange(range)
+   }
+   const setDefaults =  () => {
+      setAgeRange([minAge,initialMaxAge])
+      setDistanceRange(initialMaxDistance)
    }
    return (
       <View style={styles.main}>
@@ -45,7 +52,7 @@ const Ranges = ({navigation}: StackRegisterScreenProps) => {
             <SliderContainer
                caption="Edad"
                symbol='años'
-               sliderValue={[filters?.ageRange[0],filters?.ageRange[1]]}
+               sliderValue={[ageRange[0],ageRange[1]]}
                onValueChange={onAgeRangeChange}>
                <Slider
                   animateTransitions
@@ -62,7 +69,7 @@ const Ranges = ({navigation}: StackRegisterScreenProps) => {
             <SliderContainer
                caption="Distancia"
                symbol='Km'
-               sliderValue={8}
+               sliderValue={distanceRange}
                onValueChange={onDistanceRangeChange}>
                <Slider
                   animateTransitions
@@ -75,6 +82,13 @@ const Ranges = ({navigation}: StackRegisterScreenProps) => {
                   containerStyle={styles.slider}
                />
             </SliderContainer>
+            {
+               didEdit?
+                  <View  style={styles.buttons}>
+                     <Button title='Restablecer' onPress={()=>{setDefaults();  setDidEdit(false)}}></Button>
+                  </View>
+                  :null
+            }
             <SubmitButton title='Siguiente' onPress={onSubmit}/>
             <SubmitButton title='Omitir' onPress={()=>{setSkip(true)}}/>
          </ScrollView>
@@ -112,4 +126,10 @@ const styles = StyleSheet.create({
    slider: {
       width: '90%'
    },
+   buttons: {
+      display: "flex",
+      flexDirection:"row",
+      gap: 9,
+      padding: 10,
+   }
 })
