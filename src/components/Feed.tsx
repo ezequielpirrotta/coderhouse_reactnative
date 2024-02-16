@@ -5,7 +5,6 @@ import { colors } from '../global/colors'
 import Search from './Search'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import * as ExpoLocation from 'expo-location'
-import LoaderKit from 'react-native-loader-kit'
 import { useGetUsersQuery, useUpdateUserMutation } from '../app/servicies'
 import AwesomeAlert from 'react-native-awesome-alerts'
 import MapPreview from './MapPreview'
@@ -158,12 +157,6 @@ const Feed = () => {
                         </View>
                      :
                      <>
-                        <LoaderKit
-                           style={{ width: 50, height: 50 }}
-                           name={'LineScale'} // Optional: see list of animations below
-                           size={50} // Required on iOS
-                           color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-                        />
                         <ActivityIndicator size={'large'}></ActivityIndicator>
                         <Text>Cargando usuarios...</Text>
                      </>
