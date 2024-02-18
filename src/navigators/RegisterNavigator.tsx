@@ -1,23 +1,19 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet} from 'react-native'
+import React from 'react'
 import { StackScreenProps } from '../data/navigationTypes'
 import { colors } from '../global/colors'
-import { useCreateUserMutation, useGetUserQuery, useRegisterMutation } from '../app/servicies'
-import {UserData } from '../data/objectTypes'
-import { signUpSchema } from '../validations/signUpSchema'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Header from '../components/Header'
+import { Provider } from 'react-redux'
+import { registerStore } from '../app/Register/registerStore'
 import { RootStackRegisterParamList } from '../data/navigationTypes';
 import MainData from '../components/users/Registration/MainData';
 import GenderData from '../components/users/Registration/GenderData'
 import UserHome from '../components/users/Registration/UserHome'
-import Register from '../components/users/Registration/Register'
-import { Provider } from 'react-redux'
-import { registerStore } from '../app/Register/registerStore'
 import Preferences from '../components/users/Registration/Preferences'
 import Pictures from '../components/users/Registration/Pictures'
 import Bio from '../components/users/Registration/Bio'
 import Ranges from '../components/users/Registration/Ranges'
+import Register from '../components/users/Registration/Register'
 
 const RootStack = createNativeStackNavigator<RootStackRegisterParamList>();
 

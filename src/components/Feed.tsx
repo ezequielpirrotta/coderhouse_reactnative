@@ -1,4 +1,4 @@
-import { ActivityIndicator, Dimensions, FlatList, Image, Modal, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Dimensions, FlatList, Image, Modal, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { User, Location } from '../data/objectTypes'
 import { colors } from '../global/colors'
@@ -18,46 +18,56 @@ const Feed = () => {
    const user = useAppSelector((state) => state.user.data)
    const {localId} = useAppSelector((state) => state.auth)
    const [location, setLocation] = useState<Location>({latitude:'',longitude:'',address:''})
-   const [updateUserProfile, result] = useUpdateUserMutation()
+   const [updateUserProfile, {isLoading: updateIsLoading, data: updateData, isError: updateIsError}] = useUpdateUserMutation()
    const {data: users,isSuccess} = useGetUsersQuery()
    const [error,setError] = useState('')
    const [showAlert, setShowAlert] = useState(false);
    const [showMap, setShowMap] = useState(user?.location? false : true)
-   const [userLiked, setUserLiked] = useState('')
    const [userPassed, setUserPassed] = useState('')
    const [keyword,setKeyword] = useState('')
    const [filteredUsers, setFilteredUsers] = useState<User[]>([])
    const [isLoading, setIsLoading] = useState(true)
+   const [refreshing, setRefreshing] = React.useState(false);
 
+   const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      setTimeout(() => {
+         setRefreshing(false);
+      }, 2000);
+   }, []);
    const onLike = async (id: string) => {
-      setUserLiked(id);
-      if (userLiked) {
-         let updatedUser = {...user}
-         try {
+      try {
+         if (id) {
+            let updatedUser = {...user}
             if(updatedUser?.likes) {
                const hasLikes = updatedUser?.likes.length > 0
                if(hasLikes) {
-                  updatedUser.likes.push(userLiked)
+                  console.log('Mas de uno: ',updatedUser.likes.length)
+                  updatedUser.likes = [...updatedUser.likes,id]
                }
                else {
-                  updatedUser.likes = [userLiked]
+                  updatedUser.likes = []
+                  updatedUser.likes.push(id)
+                  console.log(updatedUser.likes)
                }
             }
             else {
-               updatedUser.likes = [userLiked]
+               updatedUser.likes = new Array<string>(id)
+               console.log(updatedUser.likes)
             }
-            const updateResult = await updateUserProfile({localId, data: updatedUser})
-            if('data' in updateResult){
-               dispatch(updateUser(updateResult.data))
-               setUserLiked('')
+            await updateUserProfile({localId, data: updatedUser})
+            
+            if(!updateIsError&&updateData){
+               console.log(updateData.likes)
+               dispatch(updateUser(updateData))
             }
-         }
-         
-         catch(error:any) {
-            console.log('Error likeando usuario: ',error)
          }
          
       }
+      catch(error:any) {
+         console.log('Error likeando usuario: ',error)
+      }
+         
    }
    const onPass = (id: string) => {
       setUserPassed(id);
@@ -111,7 +121,7 @@ const Feed = () => {
       if (user?.location?.latitude || user?.location?.longitude){
          setShowMap(false)
       }
-   },[user])
+   },[user,refreshing])
    useEffect(()=> {
       if(user && isSuccess){
          let usersLocation = users? users.filter((u)=> u.id != localId) : []
@@ -131,7 +141,7 @@ const Feed = () => {
          setIsLoading(false);
       }
       
-   },[users,keyword])
+   },[users,keyword,user])
    
    return (
       <View style={styles.container}>
@@ -147,8 +157,11 @@ const Feed = () => {
                            <FlatList 
                               data={filteredUsers.length>0?filteredUsers:users}
                               keyExtractor={(item) => item.id}
+                              refreshControl={
+                                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+                              }
                               renderItem={ ({item}) =>
-                                 <UserCard user={item} onLike={onLike} onPass={onPass}/>
+                                 <UserCard user={item} mainUserLocation={user?.location? user?.location : null } onLike={onLike} onPass={onPass}/>
                               }
                            />
                         :

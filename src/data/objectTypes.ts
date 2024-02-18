@@ -67,6 +67,7 @@ export type InputSelectFormProps = {
    label: string
    onChange: Function,
    options: string[]
+   defaultValue?: string | number
 }
 export type AuthState = {
    email: string

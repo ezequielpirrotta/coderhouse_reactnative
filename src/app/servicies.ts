@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { api_key, base_auth_url, base_url } from '../firebase/database'
 import { cloudinary_api_url } from '../otherServices/urls&keys'
-import { User } from '../data/objectTypes'
+import { User, UserData } from '../data/objectTypes'
 
 export const authApi = createApi({
    reducerPath: 'authApi',
@@ -60,13 +60,6 @@ export const userApi = createApi({
             body: data
          })
       }),
-      postUserLocation: builder.mutation({
-         query: ({location,localId}) => ({
-            url: `locations/${localId}.json`,
-            method: 'PUT',
-            body: location
-         })
-      })
    })
 })
 

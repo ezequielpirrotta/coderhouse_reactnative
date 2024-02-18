@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { InputSelectFormProps } from '../data/objectTypes'
 import SelectDropdown from 'react-native-select-dropdown'
 
-const InputSelectForm = ({label,onChange,options}: InputSelectFormProps) => {
+const InputSelectForm = ({label,onChange,options,defaultValue}: InputSelectFormProps) => {
 
    return (
       <View style={styles.container}>
@@ -13,6 +13,7 @@ const InputSelectForm = ({label,onChange,options}: InputSelectFormProps) => {
             onSelect={(selectedItem: string, index) => {
                onChange(selectedItem)
             }}
+            defaultValue={defaultValue ? defaultValue : options[0]}
             buttonTextAfterSelection={(selectedItem, index) => {
                // text represented after item is selected
                // if data array is an array of objects then return selectedItem.property to render after item is selected

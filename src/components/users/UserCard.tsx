@@ -1,14 +1,26 @@
-import { Dimensions, StyleSheet, Text, View, Image, Button } from 'react-native'
-import React from 'react'
-import { User } from '../../data/objectTypes'
+import { Dimensions, StyleSheet, Text, View, Image, Button, Pressable } from 'react-native'
+import React, { useState } from 'react'
+import { Location, User } from '../../data/objectTypes'
 import { colors } from '../../global/colors'
+import { AntDesign, Entypo } from '@expo/vector-icons';
+import HaversineGeolocation from 'haversine-geolocation'
 
 const UserCard = (props:{
    user: User
-   onLike?: CallableFunction
+   mainUserLocation: Location | null
+   onLike: CallableFunction
    onPass?: CallableFunction
 }) => {
-   const {user,onLike,onPass} = props
+   const {user,onLike,onPass,mainUserLocation} = props
+   const [isLiked,setIsLiked] = useState(false)
+   const distance = user.data.location && mainUserLocation? HaversineGeolocation.getDistanceBetween(user.data.location, mainUserLocation):null
+
+   const onUserLike = () => {
+      setIsLiked(!isLiked)
+      if(onLike){
+         onLike(user.id)
+      }
+   }
    return (
       <View style={styles.user}>
          <View style={styles.profilePic}>
@@ -20,14 +32,25 @@ const UserCard = (props:{
                :
                <Image source={require('../../../assets/images/deafultProfilePic.jpg')} style={styles.image}/>
          }
-         <Text style={styles.userText}>{user.data.name}, {user.data.age} años</Text>
+         <Text style={styles.userText}>{user.data.name}, {user.data.age}</Text>
+         <Text style={styles.userText}><Entypo name="location-pin" size={24} color="black" /> A {distance} km de ti</Text>
          <Text>{user.data.home}</Text>
          <View style={styles.buttons}>
             {
                (onLike && onPass) ?
                <>
-                  <Button title='Like' onPress={() => {onLike(user.id)}}/>
-                  {/** <Button title='Pass' onPress={() => {onPass(user.id)}}/> */}
+                  
+                  <Pressable onPress={()=>onUserLike()}>
+                     {
+                        isLiked ?
+                        <AntDesign name="heart" size={48} color="green" />
+                        :
+                        <AntDesign name="hearto" size={48} color="black" />
+                     }
+                  </Pressable>
+                  <Pressable onPress={()=>onPass(user.id)}>
+                     <AntDesign name="closecircle" size={48} color="red" />
+                  </Pressable>
                </>
                :null
             }
@@ -73,8 +96,10 @@ const styles = StyleSheet.create({
       borderWidth: 4
    },
    userText: {
-      margin: 5,
-      width: '60%',	
+      
+      fontSize: 24,
+      textAlign: 'center',
+      width: '100%',	
    },
    buttons: {
       flexDirection: 'row',

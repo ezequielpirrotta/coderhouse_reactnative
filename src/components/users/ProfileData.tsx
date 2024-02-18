@@ -10,14 +10,14 @@ import { updateUser } from '../../features/users/userSlice';
 import SubmitButton from '../SubmitButton';
 import { deleteSession } from '../../database';
 import { logOut } from '../../features/users/authSlice';
-import { MaterialIcons, Feather, AntDesign } from '@expo/vector-icons';
+import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import ImageSelector from '../ImageSelector';
-import { useGetUserQuery, useUpdateUserMutation } from '../../app/servicies';
+import { useUpdateUserMutation } from '../../app/servicies';
 import EditButton from './EditButton';
 import MapPreview from '../MapPreview';
 import { initialMaxAge, initialMaxDistance, maxAge, maxDistance, minAge, minDistance } from '../../global/constants';
 import BioInput from './BioInput';
-import Search from '../Search';
+import GenderSelector from './GenderSelector';
 
 const ProfileData = () => {
    const {data:user,isLoading,error} = useAppSelector((state) => state.user)
@@ -28,6 +28,7 @@ const ProfileData = () => {
    const [didEdit, setDidEdit] = useState(false)
    const [bioDidEdit, setBioDidEdit] = useState(false)
    const [userFilters, setUserFilters] = useState<Filter>(user?.filters? {...user?.filters} : {ageRange:[minAge,initialMaxAge],distanceRange:initialMaxDistance})
+   const [gender, setGender] = useState(user?.gender || '')
    const [showImagePick, setShowImagePick] = useState(false)
    const dispatch = useAppDispatch()
    const [updateUserProfile] = useUpdateUserMutation();
@@ -48,6 +49,12 @@ const ProfileData = () => {
          newFilter.distanceRange = distanceRange;
       }
       setUserFilters(newFilter)
+   }
+   const onGenderChange = (gender: string) => {
+      setDidEdit(true)
+      if(gender) {
+         setGender(gender)
+      }
    }
    const onEditProfileLocation = async (location: Location) => {
       if(user) {
@@ -108,6 +115,12 @@ const ProfileData = () => {
    const onLogOut = async() => {
       dispatch(logOut())
       await deleteSession(localId)
+   }
+   const clearChanges = ()=>{
+      if(userFilters)
+      setUserFilters(user?.filters? {...user?.filters} : {ageRange:[minAge,initialMaxAge],distanceRange:initialMaxDistance})
+      setGender(user?.gender?user?.gender:'')
+      setDidEdit(false)
    }
    return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -199,12 +212,15 @@ const ProfileData = () => {
                         </SliderContainer>
                         :
                         null
+                     }{user.gender?
+                        <GenderSelector onChange={onGenderChange}/>
+                        :null
                      }
                      {
                         didEdit?
                            <View  style={styles.buttons}>
                               <Button title='Guardar' onPress={()=>setShowAlert(true)}></Button>
-                              <Button title='Restablecer' onPress={()=>{setUserFilters({...user?.filters});  setDidEdit(false)}}></Button>
+                              <Button title='Restablecer' onPress={()=>clearChanges()}></Button>
                            </View>
                            :null
                      }

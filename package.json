@@ -26,7 +26,7 @@
     "expo-status-bar": "~1.6.0",
     "haversine-geolocation": "^1.6.0",
     "react": "18.2.0",
-    "react-native": "0.72.6",
+    "react-native": "0.72.10",
     "react-native-awesome-alerts": "^2.0.0",
     "react-native-bouncy-checkbox": "^3.0.7",
     "react-native-gifted-chat": "^2.4.0",
